@@ -1,0 +1,23 @@
+{
+  "name": "blog-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node --env-file=.env --watch ./src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/infrmke/pern-blog-system.git"
+  },
+  "author": "Inaros Lemuel",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/infrmke/pern-blog-system/issues"
+  },
+  "homepage": "https://github.com/infrmke/pern-blog-system#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
