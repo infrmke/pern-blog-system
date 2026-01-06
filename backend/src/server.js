@@ -6,6 +6,7 @@ import { connectToDb } from './config/database.js'
 import UserRouter from './modules/user/user.route.js'
 import AuthRouter from './modules/auth/auth.route.js'
 import PostRouter from './modules/post/post.route.js'
+import CommentRouter from './modules/comment/comment.route.js'
 
 const app = express()
 const PORT = process.env.PORT || 3001
@@ -18,6 +19,7 @@ connectToDb()
 app.use('/users', UserRouter)
 app.use('/auth', AuthRouter)
 app.use('/posts', PostRouter)
+app.use('/comments', CommentRouter)
 
 app.listen(PORT, () =>
   console.log(`[SERVER] up and running at http://localhost:${PORT}`)
