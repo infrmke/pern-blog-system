@@ -26,7 +26,4 @@ const Post = sequelize.define('Post', {
   },
 })
 
-User.hasMany(Post, { foreignKey: 'authorId' })
-Post.belongsTo(User, { as: 'author', foreignKey: 'authorId' })
-
 export default Post
