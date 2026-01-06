@@ -4,7 +4,7 @@ import PostController from './post.controller.js'
 
 import verifyAccessToken from '../../middlewares/verifyAccessToken.js'
 import isAdmin from '../../middlewares/isAdmin.js'
-import verifyOwnership from '../../middlewares/verifyOwnership.js'
+import { verifyPostOwnership } from '../../middlewares/verifyOwnership.js'
 
 const router = Router()
 
@@ -18,14 +18,14 @@ router.patch(
   '/:id',
   verifyAccessToken,
   isAdmin,
-  verifyOwnership,
+  verifyPostOwnership,
   PostController.update
 )
 router.delete(
   '/:id',
   verifyAccessToken,
   isAdmin,
-  verifyOwnership,
+  verifyPostOwnership,
   PostController.delete
 )
 
