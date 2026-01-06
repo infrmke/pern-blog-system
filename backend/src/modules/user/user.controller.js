@@ -2,8 +2,8 @@ import bcrypt from 'bcrypt'
 import slugify from 'slugify'
 import { v4 as uuidv4 } from 'uuid'
 
+import { User } from '../models.index.js'
 import formatUserObject from '../../utils/formatUserObject.js'
-import User from './user.model.js'
 
 class UserController {
   async create(req, res) {
