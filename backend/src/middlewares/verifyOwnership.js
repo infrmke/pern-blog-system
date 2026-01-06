@@ -1,27 +1,42 @@
-import { Post } from '../modules/models.index.js'
+import { Post, Comment } from '../modules/models.index.js'
+import canModify from '../utils/canModify.js'
 
-const verifyOwnership = async (req, res, next) => {
-  const { id } = req.params // id do post vindo da URL
-  const userId = req.user.id // id do usuário vindo do JWT
-
+const verifyPostOwnership = async (req, res, next) => {
   try {
-    const post = await Post.findByPk(id)
+    const post = await Post.findByPk(req.params.id)
 
-    if (!post) {
-      return res.status(404).json({ error: 'Post not found.' })
+    if (!post) return res.status(404).json({ error: 'Post not found.' })
+
+    if (!canModify(post, req.user)) {
+      return res
+        .status(403)
+        .json({ message: 'You are not authorized to modify this post.' })
     }
 
-    // verifica se o autor do post e o usuário logado são o mesmo
-    if (post.authorId.toString() !== userId.toString()) {
-      return res.status(403).json({
-        message: 'You are not authorized to modify this resource.',
-      })
-    }
-
+    req.post = post
     next()
   } catch (error) {
-    return res.status(500).json({ error: error.message })
+    next(error)
   }
 }
 
-export default verifyOwnership
+const verifyCommentOwnership = async (req, res, next) => {
+  try {
+    const comment = await Comment.findByPk(req.params.id)
+
+    if (!comment) return res.status(404).json({ error: 'Comment not found.' })
+
+    if (!canModify(comment, req.user)) {
+      return res
+        .status(403)
+        .json({ message: 'You are not authorized to modify this comment.' })
+    }
+
+    req.comment = comment
+    next()
+  } catch (error) {
+    next(error)
+  }
+}
+
+export { verifyPostOwnership, verifyCommentOwnership }
