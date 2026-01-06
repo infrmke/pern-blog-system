@@ -1,0 +1,20 @@
+const formatPostObject = (post) => ({
+  id: post.id,
+  title: post.title,
+  slug: post.slug,
+  banner: post.banner,
+  content: post.content,
+  createdAt: post.createdAt,
+  updatedAt: post.updatedAt,
+  author: post.author
+    ? {
+        id: post.author.id,
+        name: post.author.name,
+        username: post.author.username,
+        slug: post.author.slug,
+        avatar: post.author.avatar,
+      }
+    : null,
+})
+
+export default formatPostObject
