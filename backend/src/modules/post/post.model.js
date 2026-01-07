@@ -18,7 +18,7 @@ const Post = sequelize.define('Post', {
   },
   banner: {
     type: DataTypes.STRING,
-    allowNull: true,
+    defaultValue: 'https://placehold.co/600x400/png',
   },
   content: {
     type: DataTypes.TEXT,
