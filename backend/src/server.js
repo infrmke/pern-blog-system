@@ -8,6 +8,8 @@ import AuthRouter from './modules/auth/auth.route.js'
 import PostRouter from './modules/post/post.route.js'
 import CommentRouter from './modules/comment/comment.route.js'
 
+import errorHandler from './middlewares/errorHandler.js'
+
 const app = express()
 const PORT = process.env.PORT || 3001
 
@@ -26,6 +28,8 @@ app.use((req, res) => {
     error: `Route ${req.method} ${req.originalUrl} not found.`,
   })
 })
+
+app.use(errorHandler)
 
 app.listen(PORT, () =>
   console.log(`[SERVER] up and running at http://localhost:${PORT}`)
