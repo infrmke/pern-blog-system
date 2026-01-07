@@ -6,6 +6,7 @@ const formatPostObject = (post) => ({
   content: post.content,
   createdAt: post.createdAt,
   updatedAt: post.updatedAt,
+  likesCount: post.likedBy ? post.likedBy.length : 0,
   author: post.author
     ? {
         id: post.author.id,
