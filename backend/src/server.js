@@ -7,6 +7,7 @@ import UserRouter from './modules/user/user.route.js'
 import SessionRouter from './modules/session/session.route.js'
 import PostRouter from './modules/post/post.route.js'
 import CommentRouter from './modules/comment/comment.route.js'
+import PostLikeRouter from './modules/postLike/postLike.route.js'
 
 import errorHandler from './middlewares/errorHandler.js'
 
@@ -22,6 +23,7 @@ app.use('/users', UserRouter)
 app.use('/sessions', SessionRouter)
 app.use('/posts', PostRouter)
 app.use('/comments', CommentRouter)
+app.use('/likes', PostLikeRouter)
 
 app.use((req, res, next) => {
   const error = new Error(`Route ${req.method} ${req.originalUrl} not found.`)
