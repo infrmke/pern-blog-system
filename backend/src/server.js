@@ -9,6 +9,7 @@ import PostRouter from './modules/post/post.route.js'
 import CommentRouter from './modules/comment/comment.route.js'
 import PostLikeRouter from './modules/postLike/postLike.route.js'
 
+import rateLimiter from './middlewares/rateLimiter.js'
 import errorHandler from './middlewares/errorHandler.js'
 
 const app = express()
@@ -18,6 +19,8 @@ app.use(express.json())
 app.use(cookieParser())
 
 connectToDb()
+
+app.use(rateLimiter)
 
 app.use('/users', UserRouter)
 app.use('/sessions', SessionRouter)
