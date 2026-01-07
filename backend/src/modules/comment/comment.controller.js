@@ -2,7 +2,7 @@ import formatCommentObject from '../../utils/formatCommentObject.js'
 import { Comment, Post, User } from '../models.index.js'
 
 class CommentController {
-  async create(req, res) {
+  async create(req, res, next) {
     const { id: userId } = req.user
     const { postId } = req.params
     const { content } = req.body
@@ -19,11 +19,11 @@ class CommentController {
       const formattedComment = formatCommentObject(comment)
       return res.status(201).json(formattedComment)
     } catch (error) {
-      return res.status(500).json({ error: error.message })
+      next(error)
     }
   }
 
-  async getByPost(req, res) {
+  async getByPost(req, res, next) {
     const { postId } = req.params
 
     try {
@@ -55,11 +55,11 @@ class CommentController {
       )
       return res.status(200).json(formattedComments)
     } catch (error) {
-      return res.status(500).json({ error: error.message })
+      next(error)
     }
   }
 
-  async update(req, res) {
+  async update(req, res, next) {
     const { id } = req.params
     const { content } = req.body
 
@@ -89,11 +89,11 @@ class CommentController {
       const formattedComment = formatCommentObject(updatedComment)
       return res.status(200).json(formattedComment)
     } catch (error) {
-      return res.status(500).json({ error: error.message })
+      next(error)
     }
   }
 
-  async delete(req, res) {
+  async delete(req, res, next) {
     const { id } = req.params
 
     try {
@@ -105,7 +105,7 @@ class CommentController {
 
       return res.status(204).end()
     } catch (error) {
-      return res.status(500).json({ error: error.message })
+      next(error)
     }
   }
 }

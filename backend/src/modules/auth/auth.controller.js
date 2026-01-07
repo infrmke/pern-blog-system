@@ -7,15 +7,15 @@ import formatUserObject from '../../utils/formatUserObject.js'
 import User from '../user/user.model.js'
 
 class AuthController {
-  async status(req, res) {
+  async status(req, res, next) {
     try {
       return res.status(200).json(req.user)
     } catch (error) {
-      return res.status(500).json({ error: error.message })
+      next(error)
     }
   }
 
-  async logIn(req, res) {
+  async logIn(req, res, next) {
     const { login, password } = req.body
 
     if (!login || !password) {
@@ -61,11 +61,11 @@ class AuthController {
       const formattedUser = formatUserObject(user)
       return res.status(200).json(formattedUser)
     } catch (error) {
-      return res.status(500).json({ error: error.message })
+      next(error)
     }
   }
 
-  async logOut(req, res) {
+  async logOut(req, res, next) {
     try {
       res.clearCookie('accessToken', {
         httpOnly: true,
@@ -75,7 +75,7 @@ class AuthController {
 
       return res.status(200).json({ message: 'User has logged out.' })
     } catch (error) {
-      return res.status(500).json({ error: error.message })
+      next(error)
     }
   }
 }

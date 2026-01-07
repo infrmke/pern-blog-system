@@ -7,7 +7,7 @@ import formatPostObject from '../../utils/formatPostObject.js'
 import { Post, User } from '../models.index.js'
 
 class PostController {
-  async create(req, res) {
+  async create(req, res, next) {
     const { title, banner, content } = req.body
     const { id: authorId } = req.user
 
@@ -28,11 +28,11 @@ class PostController {
       const post = await Post.create({ title, slug, banner, content, authorId })
       return res.status(201).json(post)
     } catch (error) {
-      return res.status(500).json({ error: error.message })
+      next(error)
     }
   }
 
-  async getAll(req, res) {
+  async getAll(req, res, next) {
     try {
       const posts = await Post.findAll({
         include: [
@@ -54,11 +54,11 @@ class PostController {
       const formattedPosts = posts.map((post) => formatPostObject(post))
       return res.status(200).json(formattedPosts)
     } catch (error) {
-      return res.status(500).json({ error: error.message })
+      next(error)
     }
   }
 
-  async getById(req, res) {
+  async getById(req, res, next) {
     const { id } = req.params
 
     try {
@@ -79,11 +79,11 @@ class PostController {
       const formattedPost = formatPostObject(post)
       return res.status(200).json(formattedPost)
     } catch (error) {
-      return res.status(500).json({ error: error.message })
+      next(error)
     }
   }
 
-  async getBySlug(req, res) {
+  async getBySlug(req, res, next) {
     const { slug } = req.params
 
     try {
@@ -105,11 +105,11 @@ class PostController {
       const formattedPost = formatPostObject(post)
       return res.status(200).json(formattedPost)
     } catch (error) {
-      return res.status(500).json({ error: error.message })
+      next(error)
     }
   }
 
-  async getByTitle(req, res) {
+  async getByTitle(req, res, next) {
     const { title } = req.query
 
     try {
@@ -138,11 +138,11 @@ class PostController {
       const formattedPosts = posts.map((post) => formatPostObject(post))
       return res.status(200).json(formattedPosts)
     } catch (error) {
-      return res.status(500).json({ error: error.message })
+      next(error)
     }
   }
 
-  async getByAuthor(req, res) {
+  async getByAuthor(req, res, next) {
     const { author } = req.query
 
     try {
@@ -167,11 +167,11 @@ class PostController {
       const formattedPosts = posts.map((post) => formatPostObject(post))
       return res.status(200).json(formattedPosts)
     } catch (error) {
-      return res.status(500).json({ error: error.message })
+      next(error)
     }
   }
 
-  async update(req, res) {
+  async update(req, res, next) {
     const { id } = req.params
     const updates = req.body
 
@@ -205,11 +205,11 @@ class PostController {
       const formattedPost = formatPostObject(updatedPost)
       return res.status(200).json(formattedPost)
     } catch (error) {
-      return res.status(500).json({ error: error.message })
+      next(error)
     }
   }
 
-  async delete(req, res) {
+  async delete(req, res, next) {
     const { id } = req.params
 
     try {
@@ -221,7 +221,7 @@ class PostController {
 
       res.status(204).end()
     } catch (error) {
-      return res.status(500).json({ error: error.message })
+      next(error)
     }
   }
 }

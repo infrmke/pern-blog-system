@@ -6,7 +6,7 @@ import { User } from '../models.index.js'
 import formatUserObject from '../../utils/formatUserObject.js'
 
 class UserController {
-  async create(req, res) {
+  async create(req, res, next) {
     const { name, username, email, password, role } = req.body
 
     if (!name || !username || !email || !password) {
@@ -42,11 +42,11 @@ class UserController {
       const formattedUser = formatUserObject(user.get({ plain: true }))
       return res.status(201).json(formattedUser)
     } catch (error) {
-      return res.status(500).json({ error: error.message })
+      next(error)
     }
   }
 
-  async getAll(req, res) {
+  async getAll(req, res, next) {
     try {
       const users = await User.findAll({
         attributes: { exclude: ['password'] },
@@ -62,11 +62,11 @@ class UserController {
       const formattedUsers = users.map((user) => formatUserObject(user))
       return res.status(200).json(formattedUsers)
     } catch (error) {
-      return res.status(500).json({ error: error.message })
+      next(error)
     }
   }
 
-  async getById(req, res) {
+  async getById(req, res, next) {
     const { id } = req.params
 
     try {
@@ -80,11 +80,11 @@ class UserController {
       const formattedUser = formatUserObject(user)
       return res.status(200).json(formattedUser)
     } catch (error) {
-      return res.status(500).json({ error: error.message })
+      next(error)
     }
   }
 
-  async getBySlug(req, res) {
+  async getBySlug(req, res, next) {
     const { slug } = req.params
 
     try {
@@ -99,7 +99,7 @@ class UserController {
       const formattedUser = formatUserObject(user)
       return res.status(200).json(formattedUser)
     } catch (error) {
-      return res.status(500).json({ error: error.message })
+      next(error)
     }
   }
 
@@ -164,11 +164,11 @@ class UserController {
       const formattedUser = formatUserObject(updatedUser)
       return res.status(200).json(formattedUser)
     } catch (error) {
-      return res.status(500).json({ error: error.message })
+      next(error)
     }
   }
 
-  async delete(req, res) {
+  async delete(req, res, next) {
     const { id } = req.params
 
     try {
@@ -178,7 +178,7 @@ class UserController {
 
       return res.status(204).end()
     } catch (error) {
-      return res.status(500).json({ error: error.message })
+      next(error)
     }
   }
 }
