@@ -23,10 +23,11 @@ app.use('/auth', AuthRouter)
 app.use('/posts', PostRouter)
 app.use('/comments', CommentRouter)
 
-app.use((req, res) => {
-  res.status(404).json({
-    error: `Route ${req.method} ${req.originalUrl} not found.`,
-  })
+app.use((req, res, next) => {
+  const error = new Error(`Route ${req.method} ${req.originalUrl} not found.`)
+  error.status = 404
+  error.code = 'ROUTE_NOT_FOUND'
+  next(error)
 })
 
 app.use(errorHandler)
