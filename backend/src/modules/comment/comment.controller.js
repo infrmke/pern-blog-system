@@ -44,7 +44,7 @@ class CommentController {
         order: [['createdAt', 'DESC']],
       })
 
-      if (!comments) {
+      if (comments.length === 0) {
         return res
           .status(200)
           .json({ message: 'There are no comments under this post yet.' })

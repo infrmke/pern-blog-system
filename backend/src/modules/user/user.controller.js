@@ -53,7 +53,7 @@ class UserController {
         raw: true,
       })
 
-      if (!users) {
+      if (users.length === 0) {
         return res
           .status(200)
           .json({ message: 'There are currently no registered users.' })

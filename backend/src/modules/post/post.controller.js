@@ -45,7 +45,7 @@ class PostController {
         order: [['createdAt', 'DESC']],
       })
 
-      if (!posts) {
+      if (posts.length === 0) {
         res
           .status(200)
           .json({ message: 'There are currently no created posts.' })
@@ -129,7 +129,7 @@ class PostController {
         order: [['createdAt', 'DESC']],
       })
 
-      if (!posts) {
+      if (posts.length === 0) {
         return res
           .status(404)
           .json({ error: 'No posts matching your search were found.' })
@@ -158,7 +158,7 @@ class PostController {
         order: [['createdAt', 'DESC']],
       })
 
-      if (!posts) {
+      if (posts.length === 0) {
         return res
           .status(404)
           .json({ error: 'No posts found for this author.' })
