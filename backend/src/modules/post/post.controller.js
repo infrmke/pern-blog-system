@@ -26,7 +26,9 @@ class PostController {
       })}-${shortId}`
 
       const post = await Post.create({ title, slug, banner, content, authorId })
-      return res.status(201).json(post)
+
+      const formattedPost = formatPostObject(post.toJSON())
+      return res.status(201).json(formattedPost)
     } catch (error) {
       next(error)
     }
@@ -51,7 +53,9 @@ class PostController {
           .json({ message: 'There are currently no created posts.' })
       }
 
-      const formattedPosts = posts.map((post) => formatPostObject(post))
+      const formattedPosts = posts.map((post) =>
+        formatPostObject(post.toJSON())
+      )
       return res.status(200).json(formattedPosts)
     } catch (error) {
       next(error)
@@ -81,7 +85,7 @@ class PostController {
         return res.status(404).json({ error: 'Post not found.' })
       }
 
-      const formattedPost = formatPostObject(post)
+      const formattedPost = formatPostObject(post.toJSON())
       return res.status(200).json(formattedPost)
     } catch (error) {
       next(error)
@@ -107,7 +111,7 @@ class PostController {
         return res.status(404).json({ error: 'Post not found.' })
       }
 
-      const formattedPost = formatPostObject(post)
+      const formattedPost = formatPostObject(post.toJSON())
       return res.status(200).json(formattedPost)
     } catch (error) {
       next(error)
@@ -140,7 +144,9 @@ class PostController {
           .json({ error: 'No posts matching your search were found.' })
       }
 
-      const formattedPosts = posts.map((post) => formatPostObject(post))
+      const formattedPosts = posts.map((post) =>
+        formatPostObject(post.toJSON())
+      )
       return res.status(200).json(formattedPosts)
     } catch (error) {
       next(error)
@@ -169,7 +175,9 @@ class PostController {
           .json({ error: 'No posts found for this author.' })
       }
 
-      const formattedPosts = posts.map((post) => formatPostObject(post))
+      const formattedPosts = posts.map((post) =>
+        formatPostObject(post.toJSON())
+      )
       return res.status(200).json(formattedPosts)
     } catch (error) {
       next(error)
@@ -207,7 +215,7 @@ class PostController {
 
       const updatedPost = await post.update(updates)
 
-      const formattedPost = formatPostObject(updatedPost)
+      const formattedPost = formatPostObject(updatedPost.toJSON())
       return res.status(200).json(formattedPost)
     } catch (error) {
       next(error)

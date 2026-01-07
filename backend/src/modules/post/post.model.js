@@ -12,7 +12,7 @@ const Post = sequelize.define(
     title: {
       type: DataTypes.STRING,
       allowNull: false,
-      validate: { len: [8, 104] },
+      validate: { len: [8, 144] },
     },
     slug: {
       type: DataTypes.STRING,
@@ -26,7 +26,7 @@ const Post = sequelize.define(
     content: {
       type: DataTypes.TEXT,
       allowNull: false,
-      validate: { len: [1000, 10000] },
+      validate: { len: [100, 10000] },
     },
   },
   { tableName: 'posts' }

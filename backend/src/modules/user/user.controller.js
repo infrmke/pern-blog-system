@@ -38,7 +38,7 @@ class UserController {
         role: role || 'user',
       })
 
-      const formattedUser = formatUserObject(user.get({ plain: true }))
+      const formattedUser = formatUserObject(user.toJSON())
       return res.status(201).json(formattedUser)
     } catch (error) {
       next(error)
@@ -49,7 +49,6 @@ class UserController {
     try {
       const users = await User.findAll({
         attributes: { exclude: ['password'] },
-        raw: true,
       })
 
       if (users.length === 0) {
@@ -58,7 +57,9 @@ class UserController {
           .json({ message: 'There are currently no registered users.' })
       }
 
-      const formattedUsers = users.map((user) => formatUserObject(user))
+      const formattedUsers = users.map((user) =>
+        formatUserObject(user.toJSON())
+      )
       return res.status(200).json(formattedUsers)
     } catch (error) {
       next(error)
@@ -71,12 +72,11 @@ class UserController {
     try {
       const user = await User.findByPk(id, {
         attributes: { exclude: ['password'] },
-        raw: true,
       })
 
       if (!user) return res.status(404).json({ error: 'User not found.' })
 
-      const formattedUser = formatUserObject(user)
+      const formattedUser = formatUserObject(user.toJSON())
       return res.status(200).json(formattedUser)
     } catch (error) {
       next(error)
@@ -90,12 +90,11 @@ class UserController {
       const user = await User.findOne({
         where: { slug },
         attributes: { exclude: ['password'] },
-        raw: true,
       })
 
       if (!user) return res.status(404).json({ error: 'User not found.' })
 
-      const formattedUser = formatUserObject(user)
+      const formattedUser = formatUserObject(user.toJSON())
       return res.status(200).json(formattedUser)
     } catch (error) {
       next(error)
@@ -149,7 +148,7 @@ class UserController {
 
       const updatedUser = await user.update(updates)
 
-      const formattedUser = formatUserObject(updatedUser)
+      const formattedUser = formatUserObject(updatedUser.toJSON())
       return res.status(200).json(formattedUser)
     } catch (error) {
       next(error)

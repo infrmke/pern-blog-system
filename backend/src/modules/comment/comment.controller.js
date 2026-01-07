@@ -16,7 +16,7 @@ class CommentController {
     try {
       const comment = await Comment.create({ content, postId, userId })
 
-      const formattedComment = formatCommentObject(comment)
+      const formattedComment = formatCommentObject(comment.toJSON())
       return res.status(201).json(formattedComment)
     } catch (error) {
       next(error)
@@ -51,7 +51,7 @@ class CommentController {
       }
 
       const formattedComments = comments.map((comment) =>
-        formatCommentObject(comment)
+        formatCommentObject(comment.toJSON())
       )
       return res.status(200).json(formattedComments)
     } catch (error) {
@@ -86,7 +86,7 @@ class CommentController {
 
       const updatedComment = await comment.update({ content })
 
-      const formattedComment = formatCommentObject(updatedComment)
+      const formattedComment = formatCommentObject(updatedComment.toJSON())
       return res.status(200).json(formattedComment)
     } catch (error) {
       next(error)
