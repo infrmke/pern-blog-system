@@ -6,7 +6,7 @@ import formatUserObject from '../../utils/formatUserObject.js'
 
 import User from '../user/user.model.js'
 
-class AuthController {
+class SessionController {
   async status(req, res, next) {
     try {
       return res.status(200).json(req.user)
@@ -80,4 +80,4 @@ class AuthController {
   }
 }
 
-export default new AuthController()
+export default new SessionController()

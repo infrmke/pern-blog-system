@@ -4,7 +4,7 @@ import cookieParser from 'cookie-parser'
 import { connectToDb } from './config/database.js'
 
 import UserRouter from './modules/user/user.route.js'
-import AuthRouter from './modules/auth/auth.route.js'
+import SessionRouter from './modules/session/session.route.js'
 import PostRouter from './modules/post/post.route.js'
 import CommentRouter from './modules/comment/comment.route.js'
 
@@ -19,7 +19,7 @@ app.use(cookieParser())
 connectToDb()
 
 app.use('/users', UserRouter)
-app.use('/auth', AuthRouter)
+app.use('/sessions', SessionRouter)
 app.use('/posts', PostRouter)
 app.use('/comments', CommentRouter)
 
