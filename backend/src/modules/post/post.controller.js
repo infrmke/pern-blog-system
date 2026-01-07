@@ -25,7 +25,14 @@ class PostController {
         locale: 'pt',
       })}-${shortId}`
 
-      const post = await Post.create({ title, slug, banner, content, authorId })
+      const postData = { title, slug, content, authorId }
+
+      // o banner só será adicionado se não for uma string vazia
+      if (banner && banner.trim() !== '') {
+        postData.banner = banner
+      }
+
+      const post = await Post.create(postData)
 
       const formattedPost = formatPostObject(post.toJSON())
       return res.status(201).json(formattedPost)
