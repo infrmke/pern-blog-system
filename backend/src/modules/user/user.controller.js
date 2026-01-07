@@ -7,12 +7,12 @@ import formatUserObject from '../../utils/formatUserObject.js'
 
 class UserController {
   async create(req, res, next) {
-    const { name, username, email, password, role } = req.body
+    const { name, email, password, role } = req.body
 
-    if (!name || !username || !email || !password) {
+    if (!name || !email || !password) {
       return res.status(400).json({
         error:
-          'Must provide fields "name", "username", "email", "password" to register.',
+          'Must provide fields "name", "email" and "password" to register.',
       })
     }
 
@@ -32,7 +32,6 @@ class UserController {
 
       const user = await User.create({
         name,
-        username,
         email,
         password: hashedPassword,
         slug,
@@ -110,7 +109,7 @@ class UserController {
     if (Object.keys(updates).length === 0) {
       return res.status(400).json({
         error:
-          'Must provide at least one field, as "name", "email", "username" or "password", to proceed with update.',
+          'Must provide at least one field, such as "name", "email" or "password", to proceed with update.',
       })
     }
 
@@ -142,17 +141,6 @@ class UserController {
           return res
             .status(409)
             .json({ error: 'This email already exists in the database.' })
-      }
-
-      if (updates.username && updates.username !== user.username) {
-        const usernameExists = await User.findOne({
-          where: { username: updates.username },
-        })
-
-        if (usernameExists)
-          return res
-            .status(409)
-            .json({ error: 'This username already exists in the database.' })
       }
 
       if (updates.password) {

@@ -39,7 +39,7 @@ class PostController {
           {
             model: User,
             as: 'author',
-            attributes: ['id', 'name', 'username', 'slug', 'avatar'],
+            attributes: ['id', 'name', 'slug', 'avatar'],
           },
         ],
         order: [['createdAt', 'DESC']],
@@ -67,7 +67,7 @@ class PostController {
           {
             model: User,
             as: 'author',
-            attributes: ['id', 'name', 'username', 'slug', 'avatar'],
+            attributes: ['id', 'name', 'slug', 'avatar'],
           },
           {
             model: User,
@@ -98,7 +98,7 @@ class PostController {
           {
             model: User,
             as: 'author',
-            attributes: ['id', 'name', 'username', 'slug', 'avatar'],
+            attributes: ['id', 'name', 'slug', 'avatar'],
           },
         ],
       })
@@ -128,7 +128,7 @@ class PostController {
           {
             model: User,
             as: 'author',
-            attributes: ['id', 'name', 'username', 'slug', 'avatar'],
+            attributes: ['id', 'name', 'slug', 'avatar'],
           },
         ],
         order: [['createdAt', 'DESC']],
@@ -157,7 +157,7 @@ class PostController {
             model: User,
             as: 'author',
             where: { slug: author },
-            attributes: ['id', 'name', 'username', 'slug', 'avatar'],
+            attributes: ['id', 'name', 'slug', 'avatar'],
           },
         ],
         order: [['createdAt', 'DESC']],

@@ -1,4 +1,3 @@
-import { Op } from 'sequelize'
 import bcrypt from 'bcrypt'
 
 import generateToken from '../../utils/generateToken.js'
@@ -20,17 +19,13 @@ class SessionController {
 
     if (!login || !password) {
       return res.status(400).json({
-        error:
-          'Must provide "login" (email or username) and "password" to proceed.',
+        error: 'Must provide "login" (email) and "password" to proceed.',
       })
     }
 
     try {
       const user = await User.findOne({
-        where: {
-          //  email = login OU username = login
-          [Op.or]: [{ email: login }, { username: login }],
-        },
+        where: { email: login },
         attributes: { include: ['password'] },
         raw: true,
       })

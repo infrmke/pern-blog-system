@@ -33,7 +33,7 @@ class CommentController {
           {
             model: User,
             as: 'user',
-            attributes: ['id', 'name', 'username', 'slug', 'avatar'],
+            attributes: ['id', 'name', 'slug', 'avatar'],
           },
           {
             model: Post,
