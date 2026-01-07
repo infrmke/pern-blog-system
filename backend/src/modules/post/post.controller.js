@@ -69,6 +69,11 @@ class PostController {
             as: 'author',
             attributes: ['id', 'name', 'username', 'slug', 'avatar'],
           },
+          {
+            model: User,
+            as: 'likedBy',
+            attributes: ['id'],
+          },
         ],
       })
 
