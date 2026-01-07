@@ -10,6 +10,7 @@ const User = sequelize.define('User', {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
+    validate: { len: [2, 54] },
   },
   email: {
     type: DataTypes.STRING,
