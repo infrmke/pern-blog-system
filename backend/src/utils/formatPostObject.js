@@ -11,7 +11,6 @@ const formatPostObject = (post) => ({
     ? {
         id: post.author.id,
         name: post.author.name,
-        username: post.author.username,
         slug: post.author.slug,
         avatar: post.author.avatar,
       }
