@@ -52,6 +52,12 @@ const User = sequelize.define(
           const shortId = uuidv4().split('-')[0]
           user.slug = `${slugify(user.name, { lower: true })}-${shortId}`
         }
+
+        if (user.isNewRecord && !user.avatar) {
+          const firstName = user.name.split(' ')[0]
+          const encodedFirstName = encodeURIComponent(firstName)
+          user.avatar = `https://ui-avatars.com/api/?name=${encodedFirstName}&background=random`
+        }
       },
     },
   }
