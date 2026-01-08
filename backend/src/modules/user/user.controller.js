@@ -47,9 +47,7 @@ class UserController {
 
   async getAll(req, res, next) {
     try {
-      const users = await User.findAll({
-        attributes: { exclude: ['password'] },
-      })
+      const users = await User.findAll()
 
       if (users.length === 0) {
         return res
@@ -70,9 +68,7 @@ class UserController {
     const { id } = req.params
 
     try {
-      const user = await User.findByPk(id, {
-        attributes: { exclude: ['password'] },
-      })
+      const user = await User.findByPk(id)
 
       if (!user) return res.status(404).json({ error: 'User not found.' })
 
@@ -89,7 +85,6 @@ class UserController {
     try {
       const user = await User.findOne({
         where: { slug },
-        attributes: { exclude: ['password'] },
       })
 
       if (!user) return res.status(404).json({ error: 'User not found.' })
