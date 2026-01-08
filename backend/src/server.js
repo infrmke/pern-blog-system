@@ -1,41 +1,6 @@
-import express from 'express'
-import cookieParser from 'cookie-parser'
+import app from './app.js'
 
-import { connectToDb } from './config/database.js'
-
-import UserRouter from './modules/user/user.route.js'
-import SessionRouter from './modules/session/session.route.js'
-import PostRouter from './modules/post/post.route.js'
-import CommentRouter from './modules/comment/comment.route.js'
-import PostLikeRouter from './modules/postLike/postLike.route.js'
-
-import rateLimiter from './middlewares/rateLimiter.js'
-import errorHandler from './middlewares/errorHandler.js'
-
-const app = express()
 const PORT = process.env.PORT || 3001
-
-app.use(express.json())
-app.use(cookieParser())
-
-connectToDb()
-
-app.use(rateLimiter)
-
-app.use('/users', UserRouter)
-app.use('/sessions', SessionRouter)
-app.use('/posts', PostRouter)
-app.use('/comments', CommentRouter)
-app.use('/likes', PostLikeRouter)
-
-app.use((req, res, next) => {
-  const error = new Error(`Route ${req.method} ${req.originalUrl} not found.`)
-  error.status = 404
-  error.code = 'ROUTE_NOT_FOUND'
-  next(error)
-})
-
-app.use(errorHandler)
 
 app.listen(PORT, () =>
   console.log(`[SERVER] up and running at http://localhost:${PORT}`)
