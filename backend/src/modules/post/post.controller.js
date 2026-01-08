@@ -1,9 +1,5 @@
-import slugify from 'slugify'
-import { v4 as uuidv4 } from 'uuid'
 import { Op } from 'sequelize'
-
 import formatPostObject from '../../utils/formatPostObject.js'
-
 import { Post, User } from '../models.index.js'
 
 class PostController {
@@ -18,14 +14,7 @@ class PostController {
     }
 
     try {
-      const shortId = uuidv4().split('-')[0]
-      const slug = `${slugify(title, {
-        lower: true,
-        strict: true,
-        locale: 'pt',
-      })}-${shortId}`
-
-      const postData = { title, slug, content, authorId }
+      const postData = { title, content, authorId }
 
       // o banner só será adicionado se não for uma string vazia
       if (banner && banner.trim() !== '') {

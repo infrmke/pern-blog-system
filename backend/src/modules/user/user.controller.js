@@ -1,7 +1,4 @@
 import bcrypt from 'bcrypt'
-import slugify from 'slugify'
-import { v4 as uuidv4 } from 'uuid'
-
 import { User } from '../models.index.js'
 import formatUserObject from '../../utils/formatUserObject.js'
 
@@ -27,14 +24,10 @@ class UserController {
 
       const hashedPassword = await bcrypt.hash(password, 10)
 
-      const shortId = uuidv4().split('-')[0]
-      const slug = `${slugify(name, { lower: true })}-${shortId}`
-
       const user = await User.create({
         name,
         email,
         password: hashedPassword,
-        slug,
         role: role || 'user',
       })
 
@@ -120,11 +113,6 @@ class UserController {
       const user = await User.findByPk(id)
 
       if (!user) return res.status(404).json({ error: 'User not found.' })
-
-      if (updates.name) {
-        const shortId = uuidv4().split('-')[0]
-        updates.slug = `${slugify(updates.name, { lower: true })}-${shortId}`
-      }
 
       if (updates.email && updates.email !== user.email) {
         const emailExists = await User.findOne({
