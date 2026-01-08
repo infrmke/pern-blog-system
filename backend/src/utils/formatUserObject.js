@@ -2,6 +2,7 @@ const formatUserObject = (user) => ({
   id: user.id,
   name: user.name,
   email: user.email,
+  avatar: user.avatar,
   slug: user.slug,
   role: user.role,
   createdAt: user.createdAt,
