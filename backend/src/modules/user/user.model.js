@@ -1,4 +1,7 @@
 import { DataTypes } from 'sequelize'
+import slugify from 'slugify'
+import { v4 as uuidv4 } from 'uuid'
+
 import { sequelize } from '../../config/database.js'
 
 const User = sequelize.define(
@@ -42,6 +45,14 @@ const User = sequelize.define(
     tableName: 'users',
     defaultScope: {
       attributes: { exclude: ['password'] },
+    },
+    hooks: {
+      beforeValidate: (user, options) => {
+        if (user.isNewRecord || user.changed('name')) {
+          const shortId = uuidv4().split('-')[0]
+          user.slug = `${slugify(user.name, { lower: true })}-${shortId}`
+        }
+      },
     },
   }
 )

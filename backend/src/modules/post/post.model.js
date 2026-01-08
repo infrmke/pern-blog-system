@@ -1,4 +1,7 @@
 import { DataTypes } from 'sequelize'
+import slugify from 'slugify'
+import { v4 as uuidv4 } from 'uuid'
+
 import { sequelize } from '../../config/database.js'
 
 const Post = sequelize.define(
@@ -29,7 +32,21 @@ const Post = sequelize.define(
       validate: { len: [100, 10000] },
     },
   },
-  { tableName: 'posts' }
+  {
+    tableName: 'posts',
+    hooks: {
+      beforeValidate: (post, options) => {
+        if (post.isNewRecord) {
+          const shortId = uuidv4().split('-')[0]
+          post.slug = `${slugify(post.title, {
+            lower: true,
+            strict: true,
+            locale: 'pt',
+          })}-${shortId}`
+        }
+      },
+    },
+  }
 )
 
 export default Post
