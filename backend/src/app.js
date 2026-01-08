@@ -1,0 +1,30 @@
+import express from 'express'
+import cookieParser from 'cookie-parser'
+
+import { connectToDb } from './config/database.js'
+import globalRouter from './modules/routes.index.js'
+import errorHandler from './middlewares/errorHandler.js'
+
+// config
+const app = express()
+
+app.use(express.json())
+app.use(cookieParser())
+
+connectToDb()
+
+// rotas
+app.use(globalRouter)
+
+// middleware para rotas não encontradas (404)
+app.use((req, res, next) => {
+  const error = new Error(`Route ${req.method} ${req.originalUrl} not found.`)
+  error.status = 404
+  error.code = 'ROUTE_NOT_FOUND'
+  next(error)
+})
+
+// middleware global de erro
+app.use(errorHandler)
+
+export default app
