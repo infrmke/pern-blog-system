@@ -246,12 +246,19 @@ class PostController {
 
   async update(req, res, next) {
     const { id } = req.params
-    const updates = req.body
+
+    const { title, banner, content } = req.body
+    const updates = { title, banner, content } // apenas estes campos podem ser atualizados
+
+    // remove as propriedades que não foram enviadas (estão "undefined")
+    Object.keys(updates).forEach(
+      (key) => updates[key] === undefined && delete updates[key]
+    )
 
     if (Object.keys(updates).length === 0) {
       return res.status(400).json({
         error:
-          'Must provide at least one field, as "title", "banner" or "content" to proceed with update.',
+          'Must provide at least one field, such as "title", "banner" or "content" to proceed with update.',
       })
     }
 
@@ -262,10 +269,6 @@ class PostController {
     if (emptyField) {
       const [key] = emptyField
       return res.status(400).json({ error: `"${key}" cannot be empty.` })
-    }
-
-    if (updates.slug) {
-      return res.status(400).json({ error: "Cannot change a post's slug." })
     }
 
     try {
