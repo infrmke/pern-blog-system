@@ -6,6 +6,7 @@ import verifyAccessToken from '../../middlewares/verifyAccessToken.js'
 import isAdmin from '../../middlewares/isAdmin.js'
 import { verifyPostOwnership } from '../../middlewares/verifyOwnership.js'
 import { createPostValidator, updatePostValidator } from './post.validator.js'
+import handleValidation from '../../middlewares/handleValidation.js'
 
 const router = Router()
 
@@ -19,6 +20,7 @@ router.post(
   verifyAccessToken,
   isAdmin,
   createPostValidator,
+  handleValidation,
   PostController.create
 )
 router.patch(
@@ -27,6 +29,7 @@ router.patch(
   isAdmin,
   verifyPostOwnership,
   updatePostValidator,
+  handleValidation,
   PostController.update
 )
 router.delete(
