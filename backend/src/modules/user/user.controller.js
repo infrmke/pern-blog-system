@@ -1,7 +1,11 @@
 import bcrypt from 'bcrypt'
+
 import { User } from '../models.index.js'
 import formatUserObject from '../../utils/formatUserObject.js'
-import getPagination from '../../utils/getPagination.js'
+import {
+  getPagination,
+  formatPaginationResponse,
+} from '../../utils/getPagination.js'
 
 class UserController {
   async create(req, res, next) {
@@ -61,20 +65,13 @@ class UserController {
           .json({ message: 'There are currently no registered users.' })
       }
 
-      const totalPages = Math.ceil(count / limit)
-
       const formattedUsers = users.map((user) =>
         formatUserObject(user.toJSON())
       )
 
       return res.status(200).json({
         items: formattedUsers,
-        pagination: {
-          totalItems: count,
-          totalPages,
-          nextPage: page < totalPages ? page + 1 : null,
-          prevPage: page > 1 ? page - 1 : null,
-        },
+        pagination: formatPaginationResponse(count, page, limit),
       })
     } catch (error) {
       next(error)

@@ -1,7 +1,11 @@
 import { Op } from 'sequelize'
-import formatPostObject from '../../utils/formatPostObject.js'
+
 import { Post, User } from '../models.index.js'
-import getPagination from '../../utils/getPagination.js'
+import formatPostObject from '../../utils/formatPostObject.js'
+import {
+  getPagination,
+  formatPaginationResponse,
+} from '../../utils/getPagination.js'
 
 class PostController {
   async create(req, res, next) {
@@ -60,19 +64,12 @@ class PostController {
           .json({ message: 'There are currently no created posts.' })
       }
 
-      const totalPages = Math.ceil(count / limit)
-
       const formattedPosts = posts.map((post) =>
         formatPostObject(post.toJSON())
       )
       return res.status(200).json({
         items: formattedPosts,
-        pagination: {
-          totalItems: count,
-          totalPages,
-          nextPage: page < totalPages ? page + 1 : null,
-          prevPage: page > 1 ? page - 1 : null,
-        },
+        pagination: formatPaginationResponse(count, page, limit),
       })
     } catch (error) {
       next(error)
@@ -175,19 +172,12 @@ class PostController {
           .json({ error: 'No posts matching your search were found.' })
       }
 
-      const totalPages = Math.ceil(count / limit)
-
       const formattedPosts = posts.map((post) =>
         formatPostObject(post.toJSON())
       )
       return res.status(200).json({
         items: formattedPosts,
-        pagination: {
-          totalItems: count,
-          totalPages,
-          nextPage: page < totalPages ? page + 1 : null,
-          prevPage: page > 1 ? page - 1 : null,
-        },
+        pagination: formatPaginationResponse(count, page, limit),
       })
     } catch (error) {
       next(error)
@@ -225,19 +215,12 @@ class PostController {
           .json({ error: 'No posts found for this author.' })
       }
 
-      const totalPages = Math.ceil(count / limit)
-
       const formattedPosts = posts.map((post) =>
         formatPostObject(post.toJSON())
       )
       return res.status(200).json({
         items: formattedPosts,
-        pagination: {
-          totalItems: count,
-          totalPages,
-          nextPage: page < totalPages ? page + 1 : null,
-          prevPage: page > 1 ? page - 1 : null,
-        },
+        pagination: formatPaginationResponse(count, page, limit),
       })
     } catch (error) {
       next(error)
