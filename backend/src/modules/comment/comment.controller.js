@@ -11,12 +11,6 @@ class CommentController {
     const { postId } = req.params
     const { content } = req.body
 
-    if (!content) {
-      return res
-        .status(400)
-        .json({ error: 'Must provide field "content" to proceed.' })
-    }
-
     try {
       const comment = await Comment.create({ content, postId, userId })
 
@@ -73,12 +67,6 @@ class CommentController {
   async update(req, res, next) {
     const { id } = req.params
     const { content } = req.body
-
-    if (!content) {
-      return res
-        .status(400)
-        .json({ error: 'Must provide field "content" to proceed.' })
-    }
 
     try {
       const comment = await Comment.findByPk(id, {
