@@ -14,11 +14,11 @@ class SessionController {
   }
 
   async logIn(req, res, next) {
-    const { login, password } = req.body
+    const { email, password } = req.body
 
     try {
       const user = await User.findOne({
-        where: { email: login },
+        where: { email },
         attributes: { include: ['password'] },
         raw: true,
       })
