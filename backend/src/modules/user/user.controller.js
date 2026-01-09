@@ -115,7 +115,14 @@ class UserController {
 
   async update(req, res, next) {
     const { id } = req.params
-    const updates = req.body
+
+    const { name, email, avatar, password, confirm_password } = req.body
+    const updates = { name, email, avatar, password, confirm_password } // apenas estes campos podem ser atualizados
+
+    // remove as propriedades que não foram enviadas (estão "undefined")
+    Object.keys(updates).forEach(
+      (key) => updates[key] === undefined && delete updates[key]
+    )
 
     if (Object.keys(updates).length === 0) {
       return res.status(400).json({
