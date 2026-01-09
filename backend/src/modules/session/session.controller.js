@@ -1,8 +1,8 @@
-import bcrypt from 'bcrypt'
-
 import { User } from '../models.index.js'
+
 import generateToken from '../../utils/generateToken.js'
 import { formatUserObject } from '../../utils/formatResourceObject.js'
+import { validatePassword } from '../../utils/password.js'
 
 class SessionController {
   async status(req, res, next) {
@@ -27,7 +27,7 @@ class SessionController {
         return res.status(401).json({ error: 'Invalid credentials.' })
       }
 
-      const isPwdValid = await bcrypt.compare(password, user.password)
+      const isPwdValid = await validatePassword(password, user.password)
 
       if (!isPwdValid) {
         return res.status(401).json({ error: 'Invalid credentials.' })
