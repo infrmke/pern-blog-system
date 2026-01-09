@@ -16,12 +16,6 @@ class SessionController {
   async logIn(req, res, next) {
     const { login, password } = req.body
 
-    if (!login || !password) {
-      return res.status(400).json({
-        error: 'Must provide "login" (email) and "password" to proceed.',
-      })
-    }
-
     try {
       const user = await User.findOne({
         where: { email: login },

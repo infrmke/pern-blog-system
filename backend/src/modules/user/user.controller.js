@@ -10,20 +10,7 @@ import verifyEmptyFields from '../../utils/verifyEmptyFields.js'
 
 class UserController {
   async create(req, res, next) {
-    const { name, email, password, confirm_password, role } = req.body
-
-    if (!name || !email || !password) {
-      return res.status(400).json({
-        error:
-          'Must provide fields "name", "email", "password" and "confirm_password" to register.',
-      })
-    }
-
-    if (password !== confirm_password) {
-      return res.status(400).json({
-        error: "Passwords don't match each other.",
-      })
-    }
+    const { name, email, password, role } = req.body
 
     try {
       const existingUser = await User.findOne({ where: { email } })
@@ -126,18 +113,6 @@ class UserController {
       return res.status(400).json({
         error:
           'Must provide at least one field, such as "name", "email" or "password" with "confirm_password", to proceed with update.',
-      })
-    }
-
-    const emptyField = verifyEmptyFields(updates)
-
-    if (emptyField) {
-      return res.status(404).json({ error: `${emptyField} cannot be empty.` })
-    }
-
-    if (updates.password && updates.password !== updates.confirm_password) {
-      return res.status(400).json({
-        error: "Passwords don't match each other.",
       })
     }
 
