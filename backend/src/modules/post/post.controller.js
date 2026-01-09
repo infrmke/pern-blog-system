@@ -31,8 +31,12 @@ class PostController {
   }
 
   async getAll(req, res, next) {
+    const page = parseInt(req.query.page) || 1
+    const limit = parseInt(req.query.limit) || 10
+    const offset = (page - 1) * limit
+
     try {
-      const posts = await Post.findAll({
+      const { count, rows: posts } = await Post.findAndCountAll({
         include: [
           {
             model: User,
@@ -40,19 +44,32 @@ class PostController {
             attributes: ['id', 'name', 'slug', 'avatar'],
           },
         ],
+        distinct: true,
+        limit,
+        offset,
         order: [['createdAt', 'DESC']],
       })
 
       if (posts.length === 0) {
-        res
+        return res
           .status(200)
           .json({ message: 'There are currently no created posts.' })
       }
 
+      const totalPages = Math.ceil(count / limit)
+
       const formattedPosts = posts.map((post) =>
         formatPostObject(post.toJSON())
       )
-      return res.status(200).json(formattedPosts)
+      return res.status(200).json({
+        items: formattedPosts,
+        pagination: {
+          totalItems: count,
+          totalPages,
+          nextPage: page < totalPages ? page + 1 : null,
+          prevPage: page > 1 ? page - 1 : null,
+        },
+      })
     } catch (error) {
       next(error)
     }
@@ -117,8 +134,12 @@ class PostController {
   async getByTitle(req, res, next) {
     const { title } = req.query
 
+    const page = parseInt(req.query.page) || 1
+    const limit = parseInt(req.query.limit) || 10
+    const offset = (page - 1) * limit
+
     try {
-      const posts = await Post.findAll({
+      const { count, rows: posts } = await Post.findAndCountAll({
         where: {
           title: {
             [Op.iLike]: `%${title}%`, // o símbolo "%" representa uma busca em qualquer parte da string
@@ -131,6 +152,9 @@ class PostController {
             attributes: ['id', 'name', 'slug', 'avatar'],
           },
         ],
+        distinct: true,
+        limit,
+        offset,
         order: [['createdAt', 'DESC']],
       })
 
@@ -140,10 +164,20 @@ class PostController {
           .json({ error: 'No posts matching your search were found.' })
       }
 
+      const totalPages = Math.ceil(count / limit)
+
       const formattedPosts = posts.map((post) =>
         formatPostObject(post.toJSON())
       )
-      return res.status(200).json(formattedPosts)
+      return res.status(200).json({
+        items: formattedPosts,
+        pagination: {
+          totalItems: count,
+          totalPages,
+          nextPage: page < totalPages ? page + 1 : null,
+          prevPage: page > 1 ? page - 1 : null,
+        },
+      })
     } catch (error) {
       next(error)
     }
@@ -152,8 +186,12 @@ class PostController {
   async getByAuthor(req, res, next) {
     const { author } = req.query
 
+    const page = parseInt(req.query.page) || 1
+    const limit = parseInt(req.query.limit) || 10
+    const offset = (page - 1) * limit
+
     try {
-      const posts = await Post.findAll({
+      const { count, rows: posts } = await Post.findAndCountAll({
         include: [
           {
             model: User,
@@ -162,6 +200,9 @@ class PostController {
             attributes: ['id', 'name', 'slug', 'avatar'],
           },
         ],
+        distinct: true,
+        limit,
+        offset,
         order: [['createdAt', 'DESC']],
       })
 
@@ -171,10 +212,20 @@ class PostController {
           .json({ error: 'No posts found for this author.' })
       }
 
+      const totalPages = Math.ceil(count / limit)
+
       const formattedPosts = posts.map((post) =>
         formatPostObject(post.toJSON())
       )
-      return res.status(200).json(formattedPosts)
+      return res.status(200).json({
+        items: formattedPosts,
+        pagination: {
+          totalItems: count,
+          totalPages,
+          nextPage: page < totalPages ? page + 1 : null,
+          prevPage: page > 1 ? page - 1 : null,
+        },
+      })
     } catch (error) {
       next(error)
     }

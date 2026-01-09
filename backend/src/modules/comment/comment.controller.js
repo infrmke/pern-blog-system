@@ -26,8 +26,12 @@ class CommentController {
   async getByPost(req, res, next) {
     const { postId } = req.params
 
+    const page = parseInt(req.query.page) || 1
+    const limit = parseInt(req.query.limit) || 10
+    const offset = (page - 1) * limit
+
     try {
-      const comments = await Comment.findAll({
+      const { count, rows: comments } = await Comment.findAndCountAll({
         where: { postId },
         include: [
           {
@@ -41,6 +45,9 @@ class CommentController {
             attributes: ['id', 'title', 'slug'],
           },
         ],
+        distinct: true,
+        limit,
+        offset,
         order: [['createdAt', 'DESC']],
       })
 
@@ -50,10 +57,20 @@ class CommentController {
           .json({ message: 'There are no comments under this post yet.' })
       }
 
+      const totalPages = Math.ceil(count / limit)
+
       const formattedComments = comments.map((comment) =>
         formatCommentObject(comment.toJSON())
       )
-      return res.status(200).json(formattedComments)
+      return res.status(200).json({
+        items: formattedComments,
+        pagination: {
+          totalItems: count,
+          totalPages,
+          nextPage: page < totalPages ? page + 1 : null,
+          prevPage: page > 1 ? page - 1 : null,
+        },
+      })
     } catch (error) {
       next(error)
     }

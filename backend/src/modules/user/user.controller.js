@@ -39,8 +39,16 @@ class UserController {
   }
 
   async getAll(req, res, next) {
+    const page = parseInt(req.query.page) || 1
+    const limit = parseInt(req.query.limit) || 10
+    const offset = (page - 1) * limit
+
     try {
-      const users = await User.findAll()
+      const { count, rows: users } = await User.findAndCountAll({
+        limit,
+        offset,
+        order: [['createdAt', 'DESC']],
+      })
 
       if (users.length === 0) {
         return res
@@ -48,10 +56,21 @@ class UserController {
           .json({ message: 'There are currently no registered users.' })
       }
 
+      const totalPages = Math.ceil(count / limit)
+
       const formattedUsers = users.map((user) =>
         formatUserObject(user.toJSON())
       )
-      return res.status(200).json(formattedUsers)
+
+      return res.status(200).json({
+        items: formattedUsers,
+        pagination: {
+          totalItems: count,
+          totalPages,
+          nextPage: page < totalPages ? page + 1 : null,
+          prevPage: page > 1 ? page - 1 : null,
+        },
+      })
     } catch (error) {
       next(error)
     }
