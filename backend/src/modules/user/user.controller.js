@@ -4,12 +4,18 @@ import formatUserObject from '../../utils/formatUserObject.js'
 
 class UserController {
   async create(req, res, next) {
-    const { name, email, password, role } = req.body
+    const { name, email, password, confirm_password, role } = req.body
 
     if (!name || !email || !password) {
       return res.status(400).json({
         error:
-          'Must provide fields "name", "email" and "password" to register.',
+          'Must provide fields "name", "email", "password" and "confirm_password" to register.',
+      })
+    }
+
+    if (password !== confirm_password) {
+      return res.status(400).json({
+        error: "Passwords don't match each other.",
       })
     }
 
@@ -115,7 +121,7 @@ class UserController {
     if (Object.keys(updates).length === 0) {
       return res.status(400).json({
         error:
-          'Must provide at least one field, such as "name", "email" or "password", to proceed with update.',
+          'Must provide at least one field, such as "name", "email" or "password" with "confirm_password", to proceed with update.',
       })
     }
 
@@ -126,6 +132,12 @@ class UserController {
     if (emptyField) {
       const [key] = emptyField
       return res.status(400).json({ error: `"${key}" cannot be empty.` })
+    }
+
+    if (updates.password && updates.password !== updates.confirm_password) {
+      return res.status(400).json({
+        error: "Passwords don't match each other.",
+      })
     }
 
     try {
