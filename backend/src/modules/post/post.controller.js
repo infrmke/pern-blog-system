@@ -6,6 +6,7 @@ import {
   getPagination,
   formatPaginationResponse,
 } from '../../utils/getPagination.js'
+import verifyEmptyFields from '../../utils/verifyEmptyFields.js'
 
 class PostController {
   async create(req, res, next) {
@@ -245,13 +246,10 @@ class PostController {
       })
     }
 
-    const emptyField = Object.entries(updates).find(
-      ([key, value]) => typeof value === 'string' && value.trim() === ''
-    )
+    const emptyField = verifyEmptyFields(updates)
 
     if (emptyField) {
-      const [key] = emptyField
-      return res.status(400).json({ error: `"${key}" cannot be empty.` })
+      return res.status(404).json({ error: `${emptyField} cannot be empty.` })
     }
 
     try {
