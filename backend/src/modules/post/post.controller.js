@@ -43,6 +43,11 @@ class PostController {
             as: 'author',
             attributes: ['id', 'name', 'slug', 'avatar'],
           },
+          {
+            model: User,
+            as: 'likedBy',
+            attributes: ['id'],
+          },
         ],
         distinct: true,
         limit,
@@ -117,6 +122,11 @@ class PostController {
             as: 'author',
             attributes: ['id', 'name', 'slug', 'avatar'],
           },
+          {
+            model: User,
+            as: 'likedBy',
+            attributes: ['id'],
+          },
         ],
       })
 
@@ -150,6 +160,11 @@ class PostController {
             model: User,
             as: 'author',
             attributes: ['id', 'name', 'slug', 'avatar'],
+          },
+          {
+            model: User,
+            as: 'likedBy',
+            attributes: ['id'],
           },
         ],
         distinct: true,
@@ -198,6 +213,11 @@ class PostController {
             as: 'author',
             where: { slug: author },
             attributes: ['id', 'name', 'slug', 'avatar'],
+          },
+          {
+            model: User,
+            as: 'likedBy',
+            attributes: ['id'],
           },
         ],
         distinct: true,
