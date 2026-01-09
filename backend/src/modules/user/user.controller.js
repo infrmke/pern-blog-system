@@ -166,6 +166,9 @@ class UserController {
         updates.password = await bcrypt.hash(updates.password, 10)
       }
 
+      // remove o confirm_password antes de enviar os updates
+      delete updates.confirm_password
+
       const updatedUser = await user.update(updates)
 
       const formattedUser = formatUserObject(updatedUser.toJSON())
