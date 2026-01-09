@@ -6,4 +6,15 @@ const getPagination = (query) => {
   return { page, limit, offset }
 }
 
-export default getPagination
+const formatPaginationResponse = (count, page, limit) => {
+  const totalPages = Math.ceil(count / limit)
+
+  return {
+    totalItems: count,
+    totalPages,
+    nextPage: page < totalPages ? page + 1 : null,
+    prevPage: page > 1 ? page - 1 : null,
+  }
+}
+
+export { getPagination, formatPaginationResponse }
