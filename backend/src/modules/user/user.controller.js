@@ -1,12 +1,11 @@
-import bcrypt from 'bcrypt'
-
 import { User } from '../models.index.js'
+
 import { formatUserObject } from '../../utils/formatResourceObject.js'
 import {
   getPagination,
   formatPaginationResponse,
 } from '../../utils/getPagination.js'
-import verifyEmptyFields from '../../utils/verifyEmptyFields.js'
+import { generatePassword } from '../../utils/password.js'
 
 class UserController {
   async create(req, res, next) {
@@ -21,7 +20,7 @@ class UserController {
           .json({ error: 'This email already exists in the database.' })
       }
 
-      const hashedPassword = await bcrypt.hash(password, 10)
+      const hashedPassword = await generatePassword(password)
 
       const user = await User.create({
         name,
@@ -133,7 +132,7 @@ class UserController {
       }
 
       if (updates.password) {
-        updates.password = await bcrypt.hash(updates.password, 10)
+        updates.password = await generatePassword(updates.password)
       }
 
       // remove o confirm_password antes de enviar os updates
