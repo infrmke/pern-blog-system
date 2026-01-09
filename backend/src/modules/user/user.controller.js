@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt'
 import { User } from '../models.index.js'
 import formatUserObject from '../../utils/formatUserObject.js'
+import getPagination from '../../utils/getPagination.js'
 
 class UserController {
   async create(req, res, next) {
@@ -45,9 +46,7 @@ class UserController {
   }
 
   async getAll(req, res, next) {
-    const page = parseInt(req.query.page) || 1
-    const limit = parseInt(req.query.limit) || 10
-    const offset = (page - 1) * limit
+    const { page, limit, offset } = getPagination(req.query)
 
     try {
       const { count, rows: users } = await User.findAndCountAll({

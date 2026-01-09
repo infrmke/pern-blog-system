@@ -1,4 +1,5 @@
 import formatCommentObject from '../../utils/formatCommentObject.js'
+import getPagination from '../../utils/getPagination.js'
 import { Comment, Post, User } from '../models.index.js'
 
 class CommentController {
@@ -25,10 +26,7 @@ class CommentController {
 
   async getByPost(req, res, next) {
     const { postId } = req.params
-
-    const page = parseInt(req.query.page) || 1
-    const limit = parseInt(req.query.limit) || 10
-    const offset = (page - 1) * limit
+    const { page, limit, offset } = getPagination(req.query)
 
     try {
       const { count, rows: comments } = await Comment.findAndCountAll({
