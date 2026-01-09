@@ -12,6 +12,7 @@ const Comment = sequelize.define(
     content: {
       type: DataTypes.TEXT,
       allowNull: false,
+      validate: { len: [1, 150] },
     },
   },
   { tableName: 'comments' }
