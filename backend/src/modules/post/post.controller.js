@@ -13,12 +13,6 @@ class PostController {
     const { title, banner, content } = req.body
     const { id: authorId } = req.user
 
-    if (!title || !content) {
-      return res.status(400).json({
-        error: 'Must provide fields "title" and "content" to proceed.',
-      })
-    }
-
     try {
       const postData = { title, content, authorId }
 
@@ -244,12 +238,6 @@ class PostController {
         error:
           'Must provide at least one field, such as "title", "banner" or "content" to proceed with update.',
       })
-    }
-
-    const emptyField = verifyEmptyFields(updates)
-
-    if (emptyField) {
-      return res.status(404).json({ error: `${emptyField} cannot be empty.` })
     }
 
     try {
