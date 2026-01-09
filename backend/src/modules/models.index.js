@@ -19,11 +19,16 @@ User.belongsToMany(Post, {
 
 // RELAÇÕES DE POST
 Post.belongsTo(User, { as: 'author', foreignKey: 'authorId' })
-Post.hasMany(Comment, { as: 'comments', foreignKey: 'postId' })
+Post.hasMany(Comment, {
+  as: 'comments',
+  foreignKey: 'postId',
+  onDelete: 'CASCADE',
+})
 Post.belongsToMany(User, {
   through: PostLike,
   as: 'likedBy',
   foreignKey: 'postId',
+  onDelete: 'CASCADE',
 })
 
 // RELAÇÕES DE COMMENT
