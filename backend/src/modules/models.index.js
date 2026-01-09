@@ -4,12 +4,17 @@ import Comment from './comment/comment.model.js'
 import PostLike from './postLike/postLike.model.js'
 
 // RELAÇÕES DE USER
-User.hasMany(Post, { as: 'posts', foreignKey: 'authorId' })
-User.hasMany(Comment, { as: 'comments', foreignKey: 'userId' })
+User.hasMany(Post, { as: 'posts', foreignKey: 'authorId', onDelete: 'CASCADE' })
+User.hasMany(Comment, {
+  as: 'comments',
+  foreignKey: 'userId',
+  onDelete: 'CASCADE',
+})
 User.belongsToMany(Post, {
   through: PostLike,
   as: 'likedPosts',
   foreignKey: 'userId',
+  onDelete: 'CASCADE',
 })
 
 // RELAÇÕES DE POST
