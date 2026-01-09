@@ -1,5 +1,5 @@
 import { Comment, Post, User } from '../models.index.js'
-import formatCommentObject from '../../utils/formatCommentObject.js'
+import { formatCommentObject } from '../../utils/formatResourceObject.js'
 import {
   getPagination,
   formatPaginationResponse,

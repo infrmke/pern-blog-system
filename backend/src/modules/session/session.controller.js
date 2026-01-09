@@ -1,9 +1,8 @@
 import bcrypt from 'bcrypt'
 
-import generateToken from '../../utils/generateToken.js'
-import formatUserObject from '../../utils/formatUserObject.js'
-
 import { User } from '../models.index.js'
+import generateToken from '../../utils/generateToken.js'
+import { formatUserObject } from '../../utils/formatResourceObject.js'
 
 class SessionController {
   async status(req, res, next) {

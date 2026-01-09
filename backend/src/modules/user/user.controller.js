@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt'
 
 import { User } from '../models.index.js'
-import formatUserObject from '../../utils/formatUserObject.js'
+import { formatUserObject } from '../../utils/formatResourceObject.js'
 import {
   getPagination,
   formatPaginationResponse,

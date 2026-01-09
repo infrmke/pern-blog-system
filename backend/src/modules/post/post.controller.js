@@ -1,7 +1,7 @@
 import { Op } from 'sequelize'
 
 import { Post, User } from '../models.index.js'
-import formatPostObject from '../../utils/formatPostObject.js'
+import { formatPostObject } from '../../utils/formatResourceObject.js'
 import {
   getPagination,
   formatPaginationResponse,
