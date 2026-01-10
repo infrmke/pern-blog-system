@@ -1,6 +1,10 @@
 import { Post, Comment } from '../modules/models.index.js'
 import canModify from '../utils/canModify.js'
 
+/**
+ * Verifica se o usuário autenticado é o proprietário do Post identificado pelo ID na URL.
+ * Adiciona a instância do post ao objeto `req` para evitar consultas duplicadas.
+ */
 const verifyPostOwnership = async (req, res, next) => {
   try {
     const post = await Post.findByPk(req.params.id)
@@ -20,6 +24,10 @@ const verifyPostOwnership = async (req, res, next) => {
   }
 }
 
+/**
+ * Verifica se o usuário autenticado é o proprietário do Comentário identificado pelo ID na URL.
+ * Adiciona a instância do comentário ao objeto `req` para evitar consultas duplicadas.
+ */
 const verifyCommentOwnership = async (req, res, next) => {
   try {
     const comment = await Comment.findByPk(req.params.id)

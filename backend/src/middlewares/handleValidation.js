@@ -1,6 +1,10 @@
 import { validationResult } from 'express-validator'
 import throwHttpError from '../utils/throwHttpError.js'
 
+/**
+ * Processa os resultados das validações do express-validator.
+ * Caso existam erros, interrompe a requisição e lança um erro formatado.
+ */
 const handleValidation = (req, res, next) => {
   const errors = validationResult(req)
 

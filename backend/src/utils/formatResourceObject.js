@@ -1,3 +1,8 @@
+/**
+ * Filtra e formata os dados do objeto `user`.
+ * @param {Object} user - Instância ou objeto bruto do usuário.
+ * @returns {Object} Dados públicos e formatados do usuário.
+ */
 const formatUserObject = (user) => ({
   id: user.id,
   name: user.name,
@@ -9,6 +14,11 @@ const formatUserObject = (user) => ({
   updatedAt: user.updatedAt,
 })
 
+/**
+ * Filtra e formata os dados e relacionamentos do objeto `post`.
+ * @param {Object} post - Instância ou objeto bruto da publicação.
+ * @returns {Object} Publicação estruturada.
+ */
 const formatPostObject = (post) => ({
   id: post.id,
   title: post.title,
@@ -28,6 +38,11 @@ const formatPostObject = (post) => ({
     : null,
 })
 
+/**
+ * Filtra e formata os dados e relacionamentos do objeto `comment`.
+ * @param {Object} comment - Instância ou objeto bruto do comentário.
+ * @returns {Object} Comentário estruturado.
+ */
 const formatCommentObject = (comment) => ({
   id: comment.id,
   content: comment.content,
