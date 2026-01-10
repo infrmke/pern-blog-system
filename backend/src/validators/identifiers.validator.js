@@ -1,5 +1,5 @@
 import { param } from 'express-validator'
-import handleValidation from '../middlewares/handleValidation'
+import handleValidation from '../middlewares/handleValidation.js'
 
 const validateId = [
   param('id').isUUID(4).withMessage('ID is not a valid UUID v4.'),

@@ -1,5 +1,5 @@
 import { body } from 'express-validator'
-import handleValidation from '../../middlewares/handleValidation'
+import handleValidation from '../../middlewares/handleValidation.js'
 
 const basePostRules = [
   body('title')
