@@ -6,7 +6,6 @@ import {
   getPagination,
   formatPaginationResponse,
 } from '../../utils/getPagination.js'
-import verifyEmptyFields from '../../utils/verifyEmptyFields.js'
 
 class PostController {
   async create(req, res, next) {
