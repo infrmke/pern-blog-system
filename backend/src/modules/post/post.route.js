@@ -6,17 +6,22 @@ import verifyAccessToken from '../../middlewares/verifyAccessToken.js'
 import isAdmin from '../../middlewares/isAdmin.js'
 import { verifyPostOwnership } from '../../middlewares/verifyOwnership.js'
 import { createPostValidator, updatePostValidator } from './post.validator.js'
+import {
+  validateId,
+  validateSlug,
+} from '../../validators/identifiers.validator.js'
 
 const router = Router()
 
 router.get('/', PostController.getAll)
 router.get('/search', PostController.getByTitle)
 router.get('/author', PostController.getByAuthor)
-router.get('/slug/:slug', PostController.getBySlug)
+router.get('/slug/:slug', validateSlug, PostController.getBySlug)
 router.get('/:id', PostController.getById)
 router.post(
   '/',
   verifyAccessToken,
+  validateId,
   isAdmin,
   createPostValidator,
   PostController.create
@@ -24,6 +29,7 @@ router.post(
 router.patch(
   '/:id',
   verifyAccessToken,
+  validateId,
   isAdmin,
   verifyPostOwnership,
   updatePostValidator,
@@ -32,6 +38,7 @@ router.patch(
 router.delete(
   '/:id',
   verifyAccessToken,
+  validateId,
   isAdmin,
   verifyPostOwnership,
   PostController.delete
