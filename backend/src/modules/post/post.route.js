@@ -36,7 +36,6 @@ router.get('/:id', PostController.getById)
 router.post(
   '/',
   verifyAccessToken,
-  validateId,
   isAdmin,
   createPostValidator,
   PostController.create
