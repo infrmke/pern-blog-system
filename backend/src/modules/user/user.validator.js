@@ -1,4 +1,5 @@
 import { body } from 'express-validator'
+import handleValidation from '../../middlewares/handleValidation'
 
 const registerValidator = [
   body('name')
@@ -31,6 +32,8 @@ const registerValidator = [
       }
       return true
     }),
+
+  handleValidation,
 ]
 
 const updateValidator = [
@@ -76,6 +79,8 @@ const updateValidator = [
       }
       return true
     }),
+
+  handleValidation,
 ]
 
 export { registerValidator, updateValidator }

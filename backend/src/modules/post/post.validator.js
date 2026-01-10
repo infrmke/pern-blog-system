@@ -1,4 +1,5 @@
 import { body } from 'express-validator'
+import handleValidation from '../../middlewares/handleValidation'
 
 const basePostRules = [
   body('title')
@@ -30,10 +31,12 @@ const basePostRules = [
 const createPostValidator = [
   body('banner').optional(), // torna "banner" opcional
   ...basePostRules,
+  handleValidation,
 ]
 
 const updatePostValidator = [
   ...basePostRules.map((rule) => rule.optional()), // transforma todos os campos em opcionais
+  handleValidation,
 ]
 
 export { createPostValidator, updatePostValidator }

@@ -1,4 +1,5 @@
 import { body } from 'express-validator'
+import handleValidation from '../../middlewares/handleValidation'
 
 const commentValidator = [
   body('content')
@@ -8,6 +9,8 @@ const commentValidator = [
     .withMessage('Comment cannot be empty.')
     .isLength({ min: 1, max: 150 })
     .withMessage('Comment must be between 1 and 150 characters.'),
+
+  handleValidation,
 ]
 
 export default commentValidator

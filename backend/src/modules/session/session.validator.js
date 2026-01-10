@@ -1,4 +1,5 @@
 import { body } from 'express-validator'
+import handleValidation from '../../middlewares/handleValidation'
 
 const loginValidator = [
   body('email')
@@ -13,6 +14,8 @@ const loginValidator = [
     .notEmpty()
     .withMessage('Password cannot be empty.')
     .withMessage('Password must be at least 8 characters.'),
+
+  handleValidation,
 ]
 
 export default loginValidator
