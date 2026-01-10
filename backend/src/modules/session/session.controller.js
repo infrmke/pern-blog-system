@@ -6,8 +6,17 @@ import { validatePassword } from '../../utils/password.js'
 
 class SessionController {
   async status(req, res, next) {
+    const { id } = req.user
+
     try {
-      return res.status(200).json(req.user)
+      const user = await User.findByPk(id)
+
+      if (!user) {
+        return res.status(404).json({ error: 'User or session not found.' })
+      }
+
+      const formattedUser = formatUserObject(user.toJSON())
+      return res.status(200).json(formattedUser)
     } catch (error) {
       next(error)
     }
