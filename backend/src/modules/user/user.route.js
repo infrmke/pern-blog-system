@@ -1,4 +1,5 @@
 import { Router } from 'express'
+
 import UserController from './user.controller.js'
 import { registerValidator, updateValidator } from './user.validator.js'
 import {
@@ -6,6 +7,7 @@ import {
   validateSlug,
 } from '../../validators/identifiers.validator.js'
 import verifyAccessToken from '../../middlewares/verifyAccessToken.js'
+import { verifyUserOwnership } from '../../middlewares/verifyOwnership.js'
 
 const router = Router()
 
@@ -30,11 +32,18 @@ router.patch(
   '/:id',
   verifyAccessToken,
   validateId,
+  verifyUserOwnership,
   updateValidator,
   UserController.update
 )
 
 // @route DELETE /users/:id
-router.delete('/:id', verifyAccessToken, validateId, UserController.delete)
+router.delete(
+  '/:id',
+  verifyAccessToken,
+  validateId,
+  verifyUserOwnership,
+  UserController.delete
+)
 
 export default router
