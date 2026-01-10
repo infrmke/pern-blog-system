@@ -5,6 +5,7 @@ import {
   validateId,
   validateSlug,
 } from '../../validators/identifiers.validator.js'
+import verifyAccessToken from '../../middlewares/verifyAccessToken.js'
 
 const router = Router()
 
@@ -25,9 +26,15 @@ router.get('/:id', validateId, UserController.getById)
 //  --- ROTAS PROTEGIDAS ---
 
 // @route PATCH /users/:id
-router.patch('/:id', validateId, updateValidator, UserController.update)
+router.patch(
+  '/:id',
+  verifyAccessToken,
+  validateId,
+  updateValidator,
+  UserController.update
+)
 
 // @route DELETE /users/:id
-router.delete('/:id', validateId, UserController.delete)
+router.delete('/:id', verifyAccessToken, validateId, UserController.delete)
 
 export default router
