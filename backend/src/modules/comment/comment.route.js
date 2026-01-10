@@ -4,7 +4,6 @@ import CommentController from './comment.controller.js'
 import verifyAccessToken from '../../middlewares/verifyAccessToken.js'
 import { verifyCommentOwnership } from '../../middlewares/verifyOwnership.js'
 import commentValidator from './comment.validator.js'
-import handleValidation from '../../middlewares/handleValidation.js'
 
 const router = Router()
 
@@ -13,7 +12,6 @@ router.post(
   '/post/:postId',
   verifyAccessToken,
   commentValidator,
-  handleValidation,
   CommentController.create
 )
 router.patch(
@@ -21,7 +19,6 @@ router.patch(
   verifyAccessToken,
   verifyCommentOwnership,
   commentValidator,
-  handleValidation,
   CommentController.update
 )
 router.delete(
