@@ -11,7 +11,14 @@ import {
 
 const router = Router()
 
+//  --- ROTAS PÚBLICAS ---
+
+// @route GET /comments/post/:postId
 router.get('/post/:postId', validatePostId, CommentController.getByPost)
+
+//  --- ROTAS PROTEGIDAS ---
+
+// @route POST /comments/post/:postId
 router.post(
   '/post/:postId',
   verifyAccessToken,
@@ -19,6 +26,8 @@ router.post(
   commentValidator,
   CommentController.create
 )
+
+// @route PATCH /comments/:id
 router.patch(
   '/:id',
   verifyAccessToken,
@@ -27,6 +36,8 @@ router.patch(
   commentValidator,
   CommentController.update
 )
+
+// @route DELETE /comments/:id
 router.delete(
   '/:id',
   verifyAccessToken,

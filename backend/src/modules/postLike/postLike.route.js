@@ -6,6 +6,9 @@ import { validatePostId } from '../../validators/identifiers.validator.js'
 
 const router = Router()
 
+//  --- ROTAS PROTEGIDAS ---
+
+// @route POST /likes/post/:postId
 router.post(
   '/post/:postId',
   verifyAccessToken,

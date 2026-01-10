@@ -8,11 +8,26 @@ import {
 
 const router = Router()
 
-router.post('/', registerValidator, UserController.create)
+//  --- ROTAS PÚBLICAS ---
+
+// @route GET /users
 router.get('/', UserController.getAll)
-router.get('/:id', validateId, UserController.getById)
-router.patch('/:id', validateId, updateValidator, UserController.update)
-router.delete('/:id', validateId, UserController.delete)
+
+// @route GET /users/profile/:slug
 router.get('/profile/:slug', validateSlug, UserController.getBySlug)
+
+// @route POST /users
+router.post('/', registerValidator, UserController.create)
+
+// @route GET /users/:id
+router.get('/:id', validateId, UserController.getById)
+
+//  --- ROTAS PROTEGIDAS ---
+
+// @route PATCH /users/:id
+router.patch('/:id', validateId, updateValidator, UserController.update)
+
+// @route DELETE /users/:id
+router.delete('/:id', validateId, UserController.delete)
 
 export default router
