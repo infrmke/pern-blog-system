@@ -27,7 +27,7 @@ const sequelize = new Sequelize(
 const connectToDb = async () => {
   try {
     await sequelize.authenticate()
-    console.log('[SEQUELIZE] Database connected and synchronized.')
+    console.log('[SEQUELIZE] Database connected.')
   } catch (error) {
     console.error('\n[SEQUELIZE] Connection error:', error)
   }
