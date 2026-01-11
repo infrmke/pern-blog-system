@@ -1,6 +1,10 @@
 import { Router } from 'express'
 
-import rateLimiter from '../middlewares/rateLimiter.js'
+import {
+  globalLimiter,
+  sessionLimiter,
+  contentLimiter,
+} from '../middlewares/rateLimiter.js'
 
 import UserRouter from './user/user.route.js'
 import SessionRouter from './session/session.route.js'
@@ -10,12 +14,12 @@ import PostLikeRouter from './postLike/postLike.route.js'
 
 const router = Router()
 
-router.use(rateLimiter)
+router.use(globalLimiter)
 
 router.use('/users', UserRouter)
-router.use('/sessions', SessionRouter)
-router.use('/posts', PostRouter)
-router.use('/comments', CommentRouter)
+router.use('/sessions', sessionLimiter, SessionRouter)
+router.use('/posts', contentLimiter, PostRouter)
+router.use('/comments', contentLimiter, CommentRouter)
 router.use('/likes', PostLikeRouter)
 
 export default router
