@@ -1,4 +1,4 @@
-import { Sequelize } from 'sequelize'
+const { Sequelize } = require('sequelize')
 
 // para o sequelize-cli
 const config = {
