@@ -26,6 +26,12 @@ class CommentController {
     const { page, limit, offset } = getPagination(req.query)
 
     try {
+      const post = await Post.findByPk(postId)
+
+      if (!post) {
+        return res.status(404).json({ error: 'Post not found.' })
+      }
+
       const { count, rows: comments } = await Comment.findAndCountAll({
         where: { postId },
         include: [
