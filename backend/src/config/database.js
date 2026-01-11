@@ -34,7 +34,7 @@ const connectToDb = async () => {
 }
 
 // exportação do objeto config puro para o .sequelizerc
-module.exports = config
+module.exports = { development: config }
 
 // exportações nomeadas para o resto da aplicação
 module.exports.sequelize = sequelize
