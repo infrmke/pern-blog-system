@@ -1,4 +1,4 @@
-import { User } from '../models.index.js'
+import { User } from '../index.models.js'
 
 import { formatUserObject } from '../../utils/formatResourceObject.js'
 import {

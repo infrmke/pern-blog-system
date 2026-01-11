@@ -1,4 +1,4 @@
-import { Post, Comment } from '../modules/models.index.js'
+import { Post, Comment } from '../modules/index.models.js'
 import canModify from '../utils/canModify.js'
 
 /**

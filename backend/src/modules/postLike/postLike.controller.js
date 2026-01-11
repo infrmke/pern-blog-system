@@ -1,4 +1,4 @@
-import { Post, PostLike } from '../models.index.js'
+import { Post, PostLike } from '../index.models.js'
 
 class PostLikeController {
   async toggle(req, res, next) {
