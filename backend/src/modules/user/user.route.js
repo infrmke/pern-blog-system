@@ -6,8 +6,7 @@ import {
   validateId,
   validateSlug,
 } from '../../validators/identifiers.validator.js'
-import verifyAccessToken from '../../middlewares/verifyAccessToken.js'
-import { verifyUserOwnership } from '../../middlewares/verifyOwnership.js'
+import { userAccountControl } from '../../middlewares/tollPlaza.js'
 
 const router = Router()
 
@@ -28,22 +27,9 @@ router.get('/:id', validateId, UserController.getById)
 //  --- ROTAS PROTEGIDAS ---
 
 // @route PATCH /users/:id
-router.patch(
-  '/:id',
-  verifyAccessToken,
-  validateId,
-  verifyUserOwnership,
-  updateValidator,
-  UserController.update
-)
+router.patch('/:id', userAccountControl, updateValidator, UserController.update)
 
 // @route DELETE /users/:id
-router.delete(
-  '/:id',
-  verifyAccessToken,
-  validateId,
-  verifyUserOwnership,
-  UserController.delete
-)
+router.delete('/:id', userAccountControl, UserController.delete)
 
 export default router

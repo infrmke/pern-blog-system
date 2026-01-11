@@ -1,15 +1,9 @@
 import { Router } from 'express'
 
 import PostController from './post.controller.js'
-
-import verifyAccessToken from '../../middlewares/verifyAccessToken.js'
-import isAdmin from '../../middlewares/isAdmin.js'
-import { verifyPostOwnership } from '../../middlewares/verifyOwnership.js'
 import { createPostValidator, updatePostValidator } from './post.validator.js'
-import {
-  validateId,
-  validateSlug,
-} from '../../validators/identifiers.validator.js'
+import { validateSlug } from '../../validators/identifiers.validator.js'
+import { adminAccess, postControl } from '../../middlewares/tollPlaza.js'
 
 const router = Router()
 
@@ -33,33 +27,12 @@ router.get('/:id', PostController.getById)
 //  --- ROTAS PROTEGIDAS ---
 
 // @route POST /posts/
-router.post(
-  '/',
-  verifyAccessToken,
-  isAdmin,
-  createPostValidator,
-  PostController.create
-)
+router.post('/', adminAccess, createPostValidator, PostController.create)
 
 // @route PATCH /posts/:id
-router.patch(
-  '/:id',
-  verifyAccessToken,
-  validateId,
-  isAdmin,
-  verifyPostOwnership,
-  updatePostValidator,
-  PostController.update
-)
+router.patch('/:id', postControl, updatePostValidator, PostController.update)
 
 // @route DELETE /posts/
-router.delete(
-  '/:id',
-  verifyAccessToken,
-  validateId,
-  isAdmin,
-  verifyPostOwnership,
-  PostController.delete
-)
+router.delete('/:id', postControl, PostController.delete)
 
 export default router
