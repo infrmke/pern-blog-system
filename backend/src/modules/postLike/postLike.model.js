@@ -12,12 +12,12 @@ const PostLike = sequelize.define(
     userId: {
       type: DataTypes.UUID,
       allowNull: false,
-      unique: 'unique_user_post_like',
+      unique: 'unique_user_post_like', // um usuário só pode dar um único like em cada post
     },
     postId: {
       type: DataTypes.UUID,
       allowNull: false,
-      unique: 'unique_user_post_like',
+      unique: 'unique_user_post_like', // um usuário só pode dar um único like em cada post
     },
   },
   { tableName: 'postLikes' }
