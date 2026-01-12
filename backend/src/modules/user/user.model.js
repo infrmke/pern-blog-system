@@ -2,7 +2,7 @@ import { DataTypes } from 'sequelize'
 import slugify from 'slugify'
 import { v4 as uuidv4 } from 'uuid'
 
-import { sequelize } from '../../config/database.js'
+import { sequelize } from '../../config/database.cjs'
 
 const User = sequelize.define(
   'User',
