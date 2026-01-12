@@ -1,7 +1,7 @@
 import express from 'express'
 import cookieParser from 'cookie-parser'
 
-import { connectToDb } from './config/database.js'
+import { connectToDb } from './config/database.cjs'
 import globalRouter from './modules/index.routes.js'
 import errorHandler from './middlewares/errorHandler.js'
 
