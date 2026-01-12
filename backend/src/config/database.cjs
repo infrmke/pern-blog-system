@@ -1,4 +1,8 @@
+const { loadEnvFile } = require('node:process')
+const path = require('node:path')
 const { Sequelize } = require('sequelize')
+
+loadEnvFile(path.resolve(__dirname, '../../.env'))
 
 // para o sequelize-cli
 const config = {
@@ -33,9 +37,4 @@ const connectToDb = async () => {
   }
 }
 
-// exportação do objeto config puro para o .sequelizerc
-module.exports = { development: config }
-
-// exportações nomeadas para o resto da aplicação
-module.exports.sequelize = sequelize
-module.exports.connectToDb = connectToDb
+module.exports = { development: config, sequelize, connectToDb }
