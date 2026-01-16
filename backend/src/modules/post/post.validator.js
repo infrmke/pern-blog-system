@@ -11,13 +11,6 @@ const basePostRules = [
     .notEmpty()
     .withMessage('Title cannot be empty.'),
 
-  body('banner')
-    .trim()
-    .isString()
-    .withMessage('Banner must be a string.')
-    .notEmpty()
-    .withMessage('Banner cannot be empty.'),
-
   body('content')
     .trim()
     .isString()
@@ -28,11 +21,7 @@ const basePostRules = [
     .withMessage('Content cannot be empty.'),
 ]
 
-const createPostValidator = [
-  body('banner').optional(), // torna "banner" opcional
-  ...basePostRules,
-  handleValidation,
-]
+const createPostValidator = [...basePostRules, handleValidation]
 
 const updatePostValidator = [
   ...basePostRules.map((rule) => rule.optional()), // transforma todos os campos em opcionais
