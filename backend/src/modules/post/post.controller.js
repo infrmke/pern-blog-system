@@ -1,26 +1,20 @@
+import path from 'node:path'
+import fs from 'node:fs'
 import { Op } from 'sequelize'
 
 import { Post, User } from '../index.models.js'
 import { formatPostObject } from '../../utils/formatResourceObject.js'
-import {
-  getPagination,
-  formatPaginationResponse,
-} from '../../utils/getPagination.js'
+import { getPagination, formatPaginationResponse } from '../../utils/getPagination.js'
 
 class PostController {
   async create(req, res, next) {
-    const { title, banner, content } = req.body
+    const { title, content } = req.body
     const { id: authorId } = req.user
 
     try {
-      const postData = { title, content, authorId }
-
-      // o banner só será adicionado se não for uma string vazia
-      if (banner && banner.trim() !== '') {
-        postData.banner = banner
-      }
-
-      const post = await Post.create(postData)
+      // post criado sem o campo "banner" pois o mesmo será preenchido automaticamente
+      // pelo Sequelize e apenas alterado na rota de atualização de banner
+      const post = await Post.create({ title, content, authorId })
 
       const formattedPost = formatPostObject(post.toJSON())
       return res.status(201).json(formattedPost)
@@ -53,14 +47,10 @@ class PostController {
       })
 
       if (posts.length === 0) {
-        return res
-          .status(200)
-          .json({ message: 'There are currently no created posts.' })
+        return res.status(200).json({ message: 'There are currently no created posts.' })
       }
 
-      const formattedPosts = posts.map((post) =>
-        formatPostObject(post.toJSON())
-      )
+      const formattedPosts = posts.map((post) => formatPostObject(post.toJSON()))
       return res.status(200).json({
         items: formattedPosts,
         pagination: formatPaginationResponse(count, page, limit),
@@ -161,14 +151,10 @@ class PostController {
       })
 
       if (posts.length === 0) {
-        return res
-          .status(404)
-          .json({ error: 'No posts matching your search were found.' })
+        return res.status(404).json({ error: 'No posts matching your search were found.' })
       }
 
-      const formattedPosts = posts.map((post) =>
-        formatPostObject(post.toJSON())
-      )
+      const formattedPosts = posts.map((post) => formatPostObject(post.toJSON()))
       return res.status(200).json({
         items: formattedPosts,
         pagination: formatPaginationResponse(count, page, limit),
@@ -204,14 +190,10 @@ class PostController {
       })
 
       if (posts.length === 0) {
-        return res
-          .status(404)
-          .json({ error: 'No posts found for this author.' })
+        return res.status(404).json({ error: 'No posts found for this author.' })
       }
 
-      const formattedPosts = posts.map((post) =>
-        formatPostObject(post.toJSON())
-      )
+      const formattedPosts = posts.map((post) => formatPostObject(post.toJSON()))
       return res.status(200).json({
         items: formattedPosts,
         pagination: formatPaginationResponse(count, page, limit),
@@ -224,18 +206,16 @@ class PostController {
   async update(req, res, next) {
     const { id } = req.params
 
-    const { title, banner, content } = req.body
-    const updates = { title, banner, content } // apenas estes campos podem ser atualizados
+    const { title, content } = req.body
+    const updates = { title, content } // apenas estes campos podem ser atualizados
 
     // remove as propriedades que não foram enviadas (estão "undefined")
-    Object.keys(updates).forEach(
-      (key) => updates[key] === undefined && delete updates[key]
-    )
+    Object.keys(updates).forEach((key) => updates[key] === undefined && delete updates[key])
 
     if (Object.keys(updates).length === 0) {
       return res.status(400).json({
         error:
-          'Must provide at least one field, such as "title", "banner" or "content" to proceed with update.',
+          'Must provide at least one field, such as "title" or "content" to proceed with update.',
       })
     }
 
@@ -248,6 +228,40 @@ class PostController {
 
       const formattedPost = formatPostObject(updatedPost.toJSON())
       return res.status(200).json(formattedPost)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async updateBanner(req, res, next) {
+    const { id } = req.params
+
+    try {
+      const post = await Post.findByPk(id)
+
+      if (!post) return res.status(404).json({ error: 'Post not found.' })
+
+      if (!req.file) {
+        return res.status(400).json({ error: 'No image file provided.' })
+      }
+
+      // deleta a imagem antiga se ela exisitr e não for um link, para salvar espaço
+      if (post.banner && !post.banner.startsWith('http')) {
+        // constrói o caminho antigo do banner
+        const oldFilePath = path.resolve('uploads', 'banners', post.banner)
+
+        // apaga o arquivo de forma assíncrona, e o catch vazio é para
+        // evitar erro caso o arquivo físico tenha sumido
+        await fs.unlink(oldFilePath).catch(() => null)
+      }
+
+      // atualiza o nome do novo arquivo gerado pelo multer
+      await post.update({ banner: req.file.filename })
+
+      return res.status(200).json({
+        message: 'Banner updated successfully.',
+        banner: post.banner,
+      })
     } catch (error) {
       next(error)
     }
