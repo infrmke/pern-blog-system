@@ -1,10 +1,9 @@
-import { User } from '../index.models.js'
+import path from 'node:path'
+import fs from 'node:fs'
 
+import { User } from '../index.models.js'
 import { formatUserObject } from '../../utils/formatResourceObject.js'
-import {
-  getPagination,
-  formatPaginationResponse,
-} from '../../utils/getPagination.js'
+import { getPagination, formatPaginationResponse } from '../../utils/getPagination.js'
 import { generatePassword } from '../../utils/password.js'
 
 class UserController {
@@ -15,9 +14,7 @@ class UserController {
       const existingUser = await User.findOne({ where: { email } })
 
       if (existingUser) {
-        return res
-          .status(409)
-          .json({ error: 'This email already exists in the database.' })
+        return res.status(409).json({ error: 'This email already exists in the database.' })
       }
 
       const hashedPassword = await generatePassword(password)
@@ -47,14 +44,10 @@ class UserController {
       })
 
       if (users.length === 0) {
-        return res
-          .status(200)
-          .json({ message: 'There are currently no registered users.' })
+        return res.status(200).json({ message: 'There are currently no registered users.' })
       }
 
-      const formattedUsers = users.map((user) =>
-        formatUserObject(user.toJSON())
-      )
+      const formattedUsers = users.map((user) => formatUserObject(user.toJSON()))
 
       return res.status(200).json({
         items: formattedUsers,
@@ -100,13 +93,11 @@ class UserController {
   async update(req, res, next) {
     const { id } = req.params
 
-    const { name, email, avatar, password, confirm_password } = req.body
-    const updates = { name, email, avatar, password, confirm_password } // apenas estes campos podem ser atualizados
+    const { name, email, password, confirm_password } = req.body
+    const updates = { name, email, password, confirm_password } // apenas estes campos podem ser atualizados
 
     // remove as propriedades que não foram enviadas (estão "undefined")
-    Object.keys(updates).forEach(
-      (key) => updates[key] === undefined && delete updates[key]
-    )
+    Object.keys(updates).forEach((key) => updates[key] === undefined && delete updates[key])
 
     if (Object.keys(updates).length === 0) {
       return res.status(400).json({
@@ -126,9 +117,7 @@ class UserController {
         })
 
         if (emailExists)
-          return res
-            .status(409)
-            .json({ error: 'This email already exists in the database.' })
+          return res.status(409).json({ error: 'This email already exists in the database.' })
       }
 
       if (updates.password) {
@@ -142,6 +131,40 @@ class UserController {
 
       const formattedUser = formatUserObject(updatedUser.toJSON())
       return res.status(200).json(formattedUser)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async updateAvatar(req, res, next) {
+    const { id } = req.params
+
+    try {
+      const user = await User.findByPk(id)
+
+      if (!user) return res.status(404).json({ error: 'User not found.' })
+
+      if (!req.file) {
+        return res.status(400).json({ error: 'No image file provided.' })
+      }
+
+      // deleta a imagem antiga se ela exisitr e não for um link, para salvar espaço
+      if (user.avatar && !user.avatar.startsWith('http')) {
+        // constrói o caminho antigo do avatar
+        const oldFilePath = path.resolve('uploads', 'avatars', user.avatar)
+
+        // apaga o arquivo de forma assíncrona, e o catch vazio é para
+        // evitar erro caso o arquivo físico tenha sumido
+        await fs.unlink(oldFilePath).catch(() => null)
+      }
+
+      // atualiza o nome do novo arquivo gerado pelo multer
+      await user.update({ avatar: req.file.filename })
+
+      return res.status(200).json({
+        message: 'Avatar updated successfully.',
+        avatar: user.avatar,
+      })
     } catch (error) {
       next(error)
     }
