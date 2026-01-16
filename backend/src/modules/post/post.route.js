@@ -4,6 +4,7 @@ import PostController from './post.controller.js'
 import { createPostValidator, updatePostValidator } from './post.validator.js'
 import { validateSlug } from '../../validators/identifiers.validator.js'
 import { adminAccess, postControl } from '../../middlewares/tollPlaza.js'
+import { uploadBanner } from '../../middlewares/handleUpload.js'
 
 const router = Router()
 
@@ -28,6 +29,9 @@ router.get('/:id', PostController.getById)
 
 // @route POST /posts/
 router.post('/', adminAccess, createPostValidator, PostController.create)
+
+// @route PATCH /posts/:id/banner
+router.patch('/:id/banner', postControl, uploadBanner, PostController.updateBanner)
 
 // @route PATCH /posts/:id
 router.patch('/:id', postControl, updatePostValidator, PostController.update)
