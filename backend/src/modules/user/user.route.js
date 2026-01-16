@@ -1,12 +1,11 @@
 import { Router } from 'express'
 
 import UserController from './user.controller.js'
+
 import { registerValidator, updateValidator } from './user.validator.js'
-import {
-  validateId,
-  validateSlug,
-} from '../../validators/identifiers.validator.js'
+import { validateId, validateSlug } from '../../validators/identifiers.validator.js'
 import { userAccountControl } from '../../middlewares/tollPlaza.js'
+import { uploadAvatar } from '../../middlewares/handleUpload.js'
 
 const router = Router()
 
@@ -25,6 +24,9 @@ router.post('/', registerValidator, UserController.create)
 router.get('/:id', validateId, UserController.getById)
 
 //  --- ROTAS PROTEGIDAS ---
+
+// @route PATCH /users/:id/avatar
+router.patch('/:id/avatar', userAccountControl, uploadAvatar, UserController.updateAvatar)
 
 // @route PATCH /users/:id
 router.patch('/:id', userAccountControl, updateValidator, UserController.update)
