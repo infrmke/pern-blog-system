@@ -39,8 +39,8 @@ Atualmente, o sistema gerencia o ciclo de vida de usuários, publicações e int
 
 ## Planos Futuros
 
-- **Camadas de Abstração**: Implementar Services (lógica de negócio) e Repositories (acesso a dados) para desacoplar o Sequelize dos Controllers;
-- **Processamento de Imagem**: Integrar o `Sharp` para compressão automática e conversão para formato `.webp`;
+- **Camadas de Abstração**: Implementar Services (lógica de negócio) e Repositories (acesso a dados) para desacoplar o Sequelize dos Controllers (🟢);
+- **Processamento de Imagem**: Integrar o `Sharp` para compressão automática e conversão para formato `.webp` (✔️);
 - **Design Patterns**: Refatorar o back-end para seguir o padrão Singleton;
 - **Construção da Fachada**: Implementar o front-end em React; e
-- **Padronização de Erros**: Centralizar o tratamento de exceções com o utilitário throwHttpError().
+- **Padronização de Erros**: Centralizar o tratamento de exceções com o utilitário throwHttpError() (✔️).
