@@ -1,4 +1,5 @@
 import { Post, PostLike } from '../index.models.js'
+import throwHttpError from '../../utils/throwHttpError.js'
 
 class PostLikeController {
   async toggle(req, res, next) {
@@ -8,7 +9,7 @@ class PostLikeController {
     try {
       const post = await Post.findByPk(postId)
 
-      if (!post) return res.status(404).json({ error: 'Post not found.' })
+      if (!post) throwHttpError(404, 'Post not found.', 'POST_NOT_FOUND')
 
       const existingLike = await PostLike.findOne({
         where: { userId, postId },

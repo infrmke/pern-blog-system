@@ -5,6 +5,7 @@ import { Op } from 'sequelize'
 import { Post, User } from '../index.models.js'
 import { formatPostObject } from '../../utils/formatResourceObject.js'
 import { getPagination, formatPaginationResponse } from '../../utils/getPagination.js'
+import throwHttpError from '../../utils/throwHttpError.js'
 
 class PostController {
   async create(req, res, next) {
@@ -79,9 +80,7 @@ class PostController {
         ],
       })
 
-      if (!post) {
-        return res.status(404).json({ error: 'Post not found.' })
-      }
+      if (!post) throwHttpError(404, 'Post not found.', 'POST_NOT_FOUND')
 
       const formattedPost = formatPostObject(post.toJSON())
       return res.status(200).json(formattedPost)
@@ -110,9 +109,7 @@ class PostController {
         ],
       })
 
-      if (!post) {
-        return res.status(404).json({ error: 'Post not found.' })
-      }
+      if (!post) throwHttpError(404, 'Post not found.', 'POST_NOT_FOUND')
 
       const formattedPost = formatPostObject(post.toJSON())
       return res.status(200).json(formattedPost)
@@ -212,12 +209,12 @@ class PostController {
     // remove as propriedades que não foram enviadas (estão "undefined")
     Object.keys(updates).forEach((key) => updates[key] === undefined && delete updates[key])
 
-    if (Object.keys(updates).length === 0) {
-      return res.status(400).json({
-        error:
-          'Must provide at least one field, such as "title" or "content" to proceed with update.',
-      })
-    }
+    if (Object.keys(updates).length === 0)
+      throwHttpError(
+        400,
+        'Must provide at least one field, such as "title" or "content" to proceed with update.',
+        'MISSING_UPDATE_FIELDS',
+      )
 
     try {
       const post = await Post.findByPk(id)
@@ -239,11 +236,9 @@ class PostController {
     try {
       const post = await Post.findByPk(id)
 
-      if (!post) return res.status(404).json({ error: 'Post not found.' })
+      if (!post) throwHttpError(404, 'Post not found.', 'POST_NOT_FOUND')
 
-      if (!req.file) {
-        return res.status(400).json({ error: 'No image file provided.' })
-      }
+      if (!req.file) throwHttpError(400, 'No image file provided.', 'MISSING_IMAGE_FILE')
 
       // deleta a imagem antiga se ela exisitr e não for um link, para salvar espaço
       if (post.banner && !post.banner.startsWith('http')) {
@@ -273,9 +268,7 @@ class PostController {
     try {
       const deleted = await Post.destroy({ where: { id } })
 
-      if (!deleted) {
-        return res.status(404).json({ error: 'Post not found.' })
-      }
+      if (!deleted) throwHttpError(404, 'Post not found.', 'POST_NOT_FOUND')
 
       res.status(204).end()
     } catch (error) {

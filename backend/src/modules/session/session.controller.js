@@ -3,6 +3,7 @@ import { User } from '../index.models.js'
 import generateToken from '../../utils/generateToken.js'
 import { formatUserObject } from '../../utils/formatResourceObject.js'
 import { validatePassword } from '../../utils/password.js'
+import throwHttpError from '../../utils/throwHttpError.js'
 
 class SessionController {
   async status(req, res, next) {
@@ -11,9 +12,7 @@ class SessionController {
     try {
       const user = await User.findByPk(id)
 
-      if (!user) {
-        return res.status(404).json({ error: 'User or session not found.' })
-      }
+      if (!user) throwHttpError(404, 'User or session not found.', 'USER_NOT_FOUND')
 
       const formattedUser = formatUserObject(user.toJSON())
       return res.status(200).json(formattedUser)
@@ -32,20 +31,16 @@ class SessionController {
         raw: true,
       })
 
-      if (!user) {
-        return res.status(401).json({ error: 'Invalid credentials.' })
-      }
+      if (!user) throwHttpError(401, 'Invalid credentials.', 'USER_INVALID_CREDENTIALS')
 
       const isPwdValid = await validatePassword(password, user.password)
 
-      if (!isPwdValid) {
-        return res.status(401).json({ error: 'Invalid credentials.' })
-      }
+      if (!isPwdValid) throwHttpError(401, 'Invalid credentials.', 'USER_INVALID_CREDENTIALS')
 
       const accessToken = generateToken(
         { id: user.id, role: user.role },
         process.env.JWT_ACCESS_SECRET,
-        '1d'
+        '1d',
       )
 
       res.cookie('accessToken', accessToken, {

@@ -1,9 +1,7 @@
 import { Comment, Post, User } from '../index.models.js'
 import { formatCommentObject } from '../../utils/formatResourceObject.js'
-import {
-  getPagination,
-  formatPaginationResponse,
-} from '../../utils/getPagination.js'
+import { getPagination, formatPaginationResponse } from '../../utils/getPagination.js'
+import throwHttpError from '../../utils/throwHttpError.js'
 
 class CommentController {
   async create(req, res, next) {
@@ -28,9 +26,7 @@ class CommentController {
     try {
       const post = await Post.findByPk(postId)
 
-      if (!post) {
-        return res.status(404).json({ error: 'Post not found.' })
-      }
+      if (!post) throwHttpError(404, 'Post not found.', 'POST_NOT_FOUND')
 
       const { count, rows: comments } = await Comment.findAndCountAll({
         where: { postId },
@@ -53,14 +49,10 @@ class CommentController {
       })
 
       if (comments.length === 0) {
-        return res
-          .status(200)
-          .json({ message: 'There are no comments under this post yet.' })
+        return res.status(200).json({ message: 'There are no comments under this post yet.' })
       }
 
-      const formattedComments = comments.map((comment) =>
-        formatCommentObject(comment.toJSON())
-      )
+      const formattedComments = comments.map((comment) => formatCommentObject(comment.toJSON()))
       return res.status(200).json({
         items: formattedComments,
         pagination: formatPaginationResponse(count, page, limit),
@@ -85,9 +77,7 @@ class CommentController {
         ],
       })
 
-      if (!comment) {
-        return res.status(404).json({ error: 'Comment not found.' })
-      }
+      if (!comment) throwHttpError(404, 'Comment not found.', 'COMMENT_NOT_FOUND')
 
       const updatedComment = await comment.update({ content })
 
@@ -104,9 +94,7 @@ class CommentController {
     try {
       const deleted = await Comment.destroy({ where: { id } })
 
-      if (!deleted) {
-        return res.status(404).json({ error: 'Comment not found.' })
-      }
+      if (!deleted) throwHttpError(404, 'Comment not found.', 'COMMENT_NOT_FOUND')
 
       return res.status(204).end()
     } catch (error) {

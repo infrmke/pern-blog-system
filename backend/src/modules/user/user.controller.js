@@ -5,6 +5,7 @@ import { User } from '../index.models.js'
 import { formatUserObject } from '../../utils/formatResourceObject.js'
 import { getPagination, formatPaginationResponse } from '../../utils/getPagination.js'
 import { generatePassword } from '../../utils/password.js'
+import throwHttpError from '../../utils/throwHttpError.js'
 
 class UserController {
   async create(req, res, next) {
@@ -13,9 +14,7 @@ class UserController {
     try {
       const existingUser = await User.findOne({ where: { email } })
 
-      if (existingUser) {
-        return res.status(409).json({ error: 'This email already exists in the database.' })
-      }
+      if (existingUser) throwHttpError(409, 'This e-mail already exists.', 'USER_ALREADY_EXISTS')
 
       const hashedPassword = await generatePassword(password)
 
@@ -64,7 +63,7 @@ class UserController {
     try {
       const user = await User.findByPk(id)
 
-      if (!user) return res.status(404).json({ error: 'User not found.' })
+      if (!user) throwHttpError(404, 'User not found.', 'USER_NOT_FOUND')
 
       const formattedUser = formatUserObject(user.toJSON())
       return res.status(200).json(formattedUser)
@@ -81,7 +80,7 @@ class UserController {
         where: { slug },
       })
 
-      if (!user) return res.status(404).json({ error: 'User not found.' })
+      if (!user) throwHttpError(404, 'User not found.', 'USER_NOT_FOUND')
 
       const formattedUser = formatUserObject(user.toJSON())
       return res.status(200).json(formattedUser)
@@ -99,25 +98,24 @@ class UserController {
     // remove as propriedades que não foram enviadas (estão "undefined")
     Object.keys(updates).forEach((key) => updates[key] === undefined && delete updates[key])
 
-    if (Object.keys(updates).length === 0) {
-      return res.status(400).json({
-        error:
-          'Must provide at least one field, such as "name", "email" or "password" with "confirm_password", to proceed with update.',
-      })
-    }
+    if (Object.keys(updates).length === 0)
+      throwHttpError(
+        400,
+        'Must provide at least one field, such as "name", "email" or "password" (with "confirm_password", to proceed with update.',
+        'MISSING_UPDATE_FIELDS',
+      )
 
     try {
       const user = await User.findByPk(id)
 
-      if (!user) return res.status(404).json({ error: 'User not found.' })
+      if (!user) throwHttpError(404, 'User not found.', 'USER_NOT_FOUND')
 
       if (updates.email && updates.email !== user.email) {
         const emailExists = await User.findOne({
           where: { email: updates.email },
         })
 
-        if (emailExists)
-          return res.status(409).json({ error: 'This email already exists in the database.' })
+        if (emailExists) throwHttpError(409, 'This email already exists.', 'USER_ALREADY_EXISTS')
       }
 
       if (updates.password) {
@@ -142,11 +140,9 @@ class UserController {
     try {
       const user = await User.findByPk(id)
 
-      if (!user) return res.status(404).json({ error: 'User not found.' })
+      if (!user) throwHttpError(404, 'User not found.', 'USER_NOT_FOUND')
 
-      if (!req.file) {
-        return res.status(400).json({ error: 'No image file provided.' })
-      }
+      if (!req.file) throwHttpError(400, 'No image file provided.', 'MISSING_IMAGE_FILE')
 
       // deleta a imagem antiga se ela exisitr e não for um link, para salvar espaço
       if (user.avatar && !user.avatar.startsWith('http')) {
@@ -176,7 +172,7 @@ class UserController {
     try {
       const deleted = await User.destroy({ where: { id } })
 
-      if (!deleted) return res.status(404).json({ error: 'User not found.' })
+      if (!deleted) throwHttpError(404, 'User not found.', 'USER_NOT_FOUND')
 
       return res.status(204).end()
     } catch (error) {
