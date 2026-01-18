@@ -6,6 +6,7 @@ import { formatUserObject } from '../../utils/formatResourceObject.js'
 import { getPagination, formatPaginationResponse } from '../../utils/getPagination.js'
 import { generatePassword } from '../../utils/password.js'
 import throwHttpError from '../../utils/throwHttpError.js'
+import validateUpdatePayload from '../../utils/validateUpdatePayload.js'
 
 class UserController {
   async create(req, res, next) {
@@ -93,17 +94,11 @@ class UserController {
     const { id } = req.params
 
     const { name, email, password, confirm_password } = req.body
-    const updates = { name, email, password, confirm_password } // apenas estes campos podem ser atualizados
 
-    // remove as propriedades que não foram enviadas (estão "undefined")
-    Object.keys(updates).forEach((key) => updates[key] === undefined && delete updates[key])
-
-    if (Object.keys(updates).length === 0)
-      throwHttpError(
-        400,
-        'Must provide at least one field, such as "name", "email" or "password" (with "confirm_password", to proceed with update.',
-        'MISSING_UPDATE_FIELDS',
-      )
+    const updates = validateUpdatePayload(
+      { name, email, password, confirm_password },
+      'At least one field (name, email, or password) is required for an update.',
+    )
 
     try {
       const user = await User.findByPk(id)

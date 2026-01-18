@@ -6,6 +6,7 @@ import { Post, User } from '../index.models.js'
 import { formatPostObject } from '../../utils/formatResourceObject.js'
 import { getPagination, formatPaginationResponse } from '../../utils/getPagination.js'
 import throwHttpError from '../../utils/throwHttpError.js'
+import validateUpdatePayload from '../../utils/validateUpdatePayload.js'
 
 class PostController {
   async create(req, res, next) {
@@ -204,17 +205,11 @@ class PostController {
     const { id } = req.params
 
     const { title, content } = req.body
-    const updates = { title, content } // apenas estes campos podem ser atualizados
 
-    // remove as propriedades que não foram enviadas (estão "undefined")
-    Object.keys(updates).forEach((key) => updates[key] === undefined && delete updates[key])
-
-    if (Object.keys(updates).length === 0)
-      throwHttpError(
-        400,
-        'Must provide at least one field, such as "title" or "content" to proceed with update.',
-        'MISSING_UPDATE_FIELDS',
-      )
+    const updates = validateUpdatePayload(
+      { title, content },
+      'At least one field (title or content) is required for update.',
+    )
 
     try {
       const post = await Post.findByPk(id)
