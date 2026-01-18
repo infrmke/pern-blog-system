@@ -148,7 +148,7 @@ class PostController {
       })
 
       if (posts.length === 0) {
-        return res.status(404).json({ error: 'No posts matching your search were found.' })
+        return res.status(200).json({ error: 'No posts matching your search were found.' })
       }
 
       const formattedPosts = posts.map((post) => formatPostObject(post.toJSON()))
@@ -187,7 +187,7 @@ class PostController {
       })
 
       if (posts.length === 0) {
-        return res.status(404).json({ error: 'No posts found for this author.' })
+        return res.status(200).json({ error: 'No posts found for this author.' })
       }
 
       const formattedPosts = posts.map((post) => formatPostObject(post.toJSON()))
