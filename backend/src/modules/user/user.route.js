@@ -6,6 +6,7 @@ import { registerValidator, updateValidator } from './user.validator.js'
 import { validateId, validateSlug } from '../../validators/identifiers.validator.js'
 import { userAccountControl } from '../../middlewares/tollPlaza.js'
 import { uploadAvatar } from '../../middlewares/handleUpload.js'
+import optimizeImage from '../../middlewares/optimizeImage.js'
 
 const router = Router()
 
@@ -26,7 +27,13 @@ router.get('/:id', validateId, UserController.getById)
 //  --- ROTAS PROTEGIDAS ---
 
 // @route PATCH /users/:id/avatar
-router.patch('/:id/avatar', userAccountControl, uploadAvatar, UserController.updateAvatar)
+router.patch(
+  '/:id/avatar',
+  userAccountControl,
+  uploadAvatar,
+  optimizeImage,
+  UserController.updateAvatar
+)
 
 // @route PATCH /users/:id
 router.patch('/:id', userAccountControl, updateValidator, UserController.update)
