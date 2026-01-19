@@ -1,4 +1,5 @@
 import sharp from 'sharp'
+import crypto from 'node:crypto'
 import path from 'node:path'
 
 const processImage = async (file, folder, width) => {
