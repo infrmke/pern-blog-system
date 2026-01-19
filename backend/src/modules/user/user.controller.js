@@ -1,10 +1,6 @@
-import path from 'node:path'
-import fs from 'node:fs'
+import UserService from './user.service.js'
 
-import { User } from '../index.models.js'
-import { formatUserObject } from '../../utils/formatResourceObject.js'
-import { getPagination, formatPaginationResponse } from '../../utils/getPagination.js'
-import { generatePassword } from '../../utils/password.js'
+import { getPagination } from '../../utils/getPagination.js'
 import throwHttpError from '../../utils/throwHttpError.js'
 import validateUpdatePayload from '../../utils/validateUpdatePayload.js'
 
@@ -13,21 +9,8 @@ class UserController {
     const { name, email, password, role } = req.body
 
     try {
-      const existingUser = await User.findOne({ where: { email } })
-
-      if (existingUser) throwHttpError(409, 'This e-mail already exists.', 'USER_ALREADY_EXISTS')
-
-      const hashedPassword = await generatePassword(password)
-
-      const user = await User.create({
-        name,
-        email,
-        password: hashedPassword,
-        role: role || 'user',
-      })
-
-      const formattedUser = formatUserObject(user.toJSON())
-      return res.status(201).json(formattedUser)
+      const user = await UserService.create({ name, email, password, role })
+      return res.status(201).json(user)
     } catch (error) {
       next(error)
     }
@@ -37,21 +20,17 @@ class UserController {
     const { page, limit, offset } = getPagination(req.query)
 
     try {
-      const { count, rows: users } = await User.findAndCountAll({
-        limit,
-        offset,
-        order: [['createdAt', 'DESC']],
-      })
+      const data = await UserService.getAll(page, limit, offset)
 
-      if (users.length === 0) {
+      if (!data) {
         return res.status(200).json({ message: 'There are currently no registered users.' })
       }
 
-      const formattedUsers = users.map((user) => formatUserObject(user.toJSON()))
+      const { items, pagination } = data
 
       return res.status(200).json({
-        items: formattedUsers,
-        pagination: formatPaginationResponse(count, page, limit),
+        items,
+        pagination,
       })
     } catch (error) {
       next(error)
@@ -62,12 +41,11 @@ class UserController {
     const { id } = req.params
 
     try {
-      const user = await User.findByPk(id)
+      const user = await UserService.getById(id)
 
       if (!user) throwHttpError(404, 'User not found.', 'USER_NOT_FOUND')
 
-      const formattedUser = formatUserObject(user.toJSON())
-      return res.status(200).json(formattedUser)
+      return res.status(200).json(user)
     } catch (error) {
       next(error)
     }
@@ -77,14 +55,11 @@ class UserController {
     const { slug } = req.params
 
     try {
-      const user = await User.findOne({
-        where: { slug },
-      })
+      const user = await UserService.getBySlug(slug)
 
       if (!user) throwHttpError(404, 'User not found.', 'USER_NOT_FOUND')
 
-      const formattedUser = formatUserObject(user.toJSON())
-      return res.status(200).json(formattedUser)
+      return res.status(200).json(user)
     } catch (error) {
       next(error)
     }
@@ -92,7 +67,6 @@ class UserController {
 
   async update(req, res, next) {
     const { id } = req.params
-
     const { name, email, password, confirm_password } = req.body
 
     const updates = validateUpdatePayload(
@@ -101,29 +75,11 @@ class UserController {
     )
 
     try {
-      const user = await User.findByPk(id)
+      const user = await UserService.update(id, updates)
 
       if (!user) throwHttpError(404, 'User not found.', 'USER_NOT_FOUND')
 
-      if (updates.email && updates.email !== user.email) {
-        const emailExists = await User.findOne({
-          where: { email: updates.email },
-        })
-
-        if (emailExists) throwHttpError(409, 'This email already exists.', 'USER_ALREADY_EXISTS')
-      }
-
-      if (updates.password) {
-        updates.password = await generatePassword(updates.password)
-      }
-
-      // remove o confirm_password antes de enviar os updates
-      delete updates.confirm_password
-
-      const updatedUser = await user.update(updates)
-
-      const formattedUser = formatUserObject(updatedUser.toJSON())
-      return res.status(200).json(formattedUser)
+      return res.status(200).json(user)
     } catch (error) {
       next(error)
     }
@@ -132,25 +88,12 @@ class UserController {
   async updateAvatar(req, res, next) {
     const { id } = req.params
 
+    if (!req.file) throwHttpError(400, 'No image file provided.', 'MISSING_IMAGE_FILE')
+
     try {
-      const user = await User.findByPk(id)
+      const user = await UserService.updateAvatar(id, req.file.filename)
 
       if (!user) throwHttpError(404, 'User not found.', 'USER_NOT_FOUND')
-
-      if (!req.file) throwHttpError(400, 'No image file provided.', 'MISSING_IMAGE_FILE')
-
-      // deleta a imagem antiga se ela exisitr e não for um link, para salvar espaço
-      if (user.avatar && !user.avatar.startsWith('http')) {
-        // constrói o caminho antigo do avatar
-        const oldFilePath = path.resolve('uploads', 'avatars', user.avatar)
-
-        // apaga o arquivo de forma assíncrona, e o catch vazio é para
-        // evitar erro caso o arquivo físico tenha sumido
-        await fs.unlink(oldFilePath).catch(() => null)
-      }
-
-      // atualiza o nome do novo arquivo gerado pelo multer
-      await user.update({ avatar: req.file.filename })
 
       return res.status(200).json({
         message: 'Avatar updated successfully.',
@@ -165,7 +108,7 @@ class UserController {
     const { id } = req.params
 
     try {
-      const deleted = await User.destroy({ where: { id } })
+      const deleted = await UserService.destroy(id)
 
       if (!deleted) throwHttpError(404, 'User not found.', 'USER_NOT_FOUND')
 
