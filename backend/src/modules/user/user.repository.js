@@ -6,8 +6,8 @@ class UserRepository {
     return user
   }
 
-  async findOne(filter) {
-    const user = await User.findOne({ where: filter })
+  async findOne(filter, options = {}) {
+    const user = await User.findOne({ where: filter, ...options })
     return user
   }
 
