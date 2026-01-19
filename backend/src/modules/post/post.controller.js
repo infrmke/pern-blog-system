@@ -8,6 +8,10 @@ import { getPagination, formatPaginationResponse } from '../../utils/getPaginati
 import throwHttpError from '../../utils/throwHttpError.js'
 import validateUpdatePayload from '../../utils/validateUpdatePayload.js'
 
+// configurando __dirname pra funcionar em module
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
 class PostController {
   async create(req, res, next) {
     const { title, content } = req.body
@@ -228,17 +232,17 @@ class PostController {
   async updateBanner(req, res, next) {
     const { id } = req.params
 
+    if (!req.file) throwHttpError(400, 'No image file provided.', 'MISSING_IMAGE_FILE')
+
     try {
       const post = await Post.findByPk(id)
 
       if (!post) throwHttpError(404, 'Post not found.', 'POST_NOT_FOUND')
 
-      if (!req.file) throwHttpError(400, 'No image file provided.', 'MISSING_IMAGE_FILE')
-
       // deleta a imagem antiga se ela exisitr e não for um link, para salvar espaço
       if (post.banner && !post.banner.startsWith('http')) {
         // constrói o caminho antigo do banner
-        const oldFilePath = path.resolve('uploads', 'banners', post.banner)
+        const oldFilePath = path.resolve(__dirname, '..', '..', 'uploads', 'banners', post.banner)
 
         // apaga o arquivo de forma assíncrona, e o catch vazio é para
         // evitar erro caso o arquivo físico tenha sumido
