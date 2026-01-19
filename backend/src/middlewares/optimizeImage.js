@@ -9,7 +9,7 @@ const optimizeImage = async (req, res, next) => {
 
     // processa a imagem e a atualiza com .webp
     const optimizedName = await processImage(req.file, req.uploadFolder, width)
-    req.file.filename = optimizedName
+    req.file.filename = optimizedName // passa o arquivo para o controller
 
     next()
   } catch (error) {
