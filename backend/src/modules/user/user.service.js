@@ -53,6 +53,16 @@ class UserService {
     }
   }
 
+  async getByFilter(filter, options) {
+    const user = await UserRepository.findOne(filter, options)
+
+    if (!user) return null
+
+    const formattedUser = formatUserObject(user.toJSON())
+
+    return { user, formattedUser }
+  }
+
   async getById(id) {
     const user = await UserRepository.findByPk(id)
 
