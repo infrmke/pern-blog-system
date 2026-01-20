@@ -26,8 +26,8 @@ class UserRepository {
     return user ? await user.update(data) : null
   }
 
-  async remove(filter) {
-    const user = await User.destroy({ where: filter })
+  async remove(id) {
+    const user = await User.destroy({ where: { id } })
     return user
   }
 }
