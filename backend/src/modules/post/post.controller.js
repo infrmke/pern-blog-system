@@ -1,16 +1,9 @@
-import path from 'node:path'
-import fs from 'node:fs/promises'
-import { Op } from 'sequelize'
+import PostService from './post.service.js'
 
-import { Post, User } from '../index.models.js'
 import { formatPostObject } from '../../utils/formatResourceObject.js'
 import { getPagination, formatPaginationResponse } from '../../utils/getPagination.js'
 import throwHttpError from '../../utils/throwHttpError.js'
 import validateUpdatePayload from '../../utils/validateUpdatePayload.js'
-
-// configurando __dirname pra funcionar em module
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
 
 class PostController {
   async create(req, res, next) {
@@ -18,12 +11,9 @@ class PostController {
     const { id: authorId } = req.user
 
     try {
-      // post criado sem o campo "banner" pois o mesmo será preenchido automaticamente
-      // pelo Sequelize e apenas alterado na rota de atualização de banner
-      const post = await Post.create({ title, content, authorId })
+      const post = await PostService.create({ title, content, authorId })
 
-      const formattedPost = formatPostObject(post.toJSON())
-      return res.status(201).json(formattedPost)
+      return res.status(201).json(post)
     } catch (error) {
       next(error)
     }
@@ -33,32 +23,16 @@ class PostController {
     const { page, limit, offset } = getPagination(req.query)
 
     try {
-      const { count, rows: posts } = await Post.findAndCountAll({
-        include: [
-          {
-            model: User,
-            as: 'author',
-            attributes: ['id', 'name', 'slug', 'avatar'],
-          },
-          {
-            model: User,
-            as: 'likedBy',
-            attributes: ['id'],
-          },
-        ],
-        distinct: true,
-        limit,
-        offset,
-        order: [['createdAt', 'DESC']],
-      })
+      const data = await PostService.getAll(limit, offset)
 
-      if (posts.length === 0) {
+      if (!data) {
         return res.status(200).json({ message: 'There are currently no created posts.' })
       }
 
-      const formattedPosts = posts.map((post) => formatPostObject(post.toJSON()))
+      const { count, posts } = data
+
       return res.status(200).json({
-        items: formattedPosts,
+        items: posts,
         pagination: formatPaginationResponse(count, page, limit),
       })
     } catch (error) {
@@ -70,25 +44,11 @@ class PostController {
     const { id } = req.params
 
     try {
-      const post = await Post.findByPk(id, {
-        include: [
-          {
-            model: User,
-            as: 'author',
-            attributes: ['id', 'name', 'slug', 'avatar'],
-          },
-          {
-            model: User,
-            as: 'likedBy',
-            attributes: ['id'],
-          },
-        ],
-      })
+      const post = await PostService.getById(id)
 
       if (!post) throwHttpError(404, 'Post not found.', 'POST_NOT_FOUND')
 
-      const formattedPost = formatPostObject(post.toJSON())
-      return res.status(200).json(formattedPost)
+      return res.status(200).json(post)
     } catch (error) {
       next(error)
     }
@@ -98,25 +58,12 @@ class PostController {
     const { slug } = req.params
 
     try {
-      const post = await Post.findOne({
-        where: { slug },
-        include: [
-          {
-            model: User,
-            as: 'author',
-            attributes: ['id', 'name', 'slug', 'avatar'],
-          },
-          {
-            model: User,
-            as: 'likedBy',
-            attributes: ['id'],
-          },
-        ],
-      })
+      const post = await PostService.getBySlug(slug)
 
       if (!post) throwHttpError(404, 'Post not found.', 'POST_NOT_FOUND')
 
       const formattedPost = formatPostObject(post.toJSON())
+
       return res.status(200).json(formattedPost)
     } catch (error) {
       next(error)
@@ -128,37 +75,16 @@ class PostController {
     const { page, limit, offset } = getPagination(req.query)
 
     try {
-      const { count, rows: posts } = await Post.findAndCountAll({
-        where: {
-          title: {
-            [Op.iLike]: `%${title}%`, // o símbolo "%" representa uma busca em qualquer parte da string
-          },
-        },
-        include: [
-          {
-            model: User,
-            as: 'author',
-            attributes: ['id', 'name', 'slug', 'avatar'],
-          },
-          {
-            model: User,
-            as: 'likedBy',
-            attributes: ['id'],
-          },
-        ],
-        distinct: true,
-        limit,
-        offset,
-        order: [['createdAt', 'DESC']],
-      })
+      const data = await PostService.getByTitle(title, { limit, offset })
 
-      if (posts.length === 0) {
+      if (!data) {
         return res.status(200).json({ message: 'No posts matching your search were found.' })
       }
 
-      const formattedPosts = posts.map((post) => formatPostObject(post.toJSON()))
+      const { count, posts } = data
+
       return res.status(200).json({
-        items: formattedPosts,
+        items: posts,
         pagination: formatPaginationResponse(count, page, limit),
       })
     } catch (error) {
@@ -171,33 +97,16 @@ class PostController {
     const { page, limit, offset } = getPagination(req.query)
 
     try {
-      const { count, rows: posts } = await Post.findAndCountAll({
-        include: [
-          {
-            model: User,
-            as: 'author',
-            where: { slug: author },
-            attributes: ['id', 'name', 'slug', 'avatar'],
-          },
-          {
-            model: User,
-            as: 'likedBy',
-            attributes: ['id'],
-          },
-        ],
-        distinct: true,
-        limit,
-        offset,
-        order: [['createdAt', 'DESC']],
-      })
+      const data = await PostService.getByAuthor(author, { limit, offset })
 
-      if (posts.length === 0) {
+      if (!data) {
         return res.status(200).json({ message: 'No posts found for this author.' })
       }
 
-      const formattedPosts = posts.map((post) => formatPostObject(post.toJSON()))
+      const { count, posts } = data
+
       return res.status(200).json({
-        items: formattedPosts,
+        items: posts,
         pagination: formatPaginationResponse(count, page, limit),
       })
     } catch (error) {
@@ -207,7 +116,6 @@ class PostController {
 
   async update(req, res, next) {
     const { id } = req.params
-
     const { title, content } = req.body
 
     const updates = validateUpdatePayload(
@@ -216,14 +124,11 @@ class PostController {
     )
 
     try {
-      const post = await Post.findByPk(id)
+      const post = await PostService.update(id, updates)
 
-      if (!post) return res.status(404).json({ error: 'Post not found.' })
+      if (!post) throwHttpError(404, 'Post not found.', 'POST_NOT_FOUND')
 
-      const updatedPost = await post.update(updates)
-
-      const formattedPost = formatPostObject(updatedPost.toJSON())
-      return res.status(200).json(formattedPost)
+      return res.status(200).json(post)
     } catch (error) {
       next(error)
     }
@@ -235,22 +140,9 @@ class PostController {
     if (!req.file) throwHttpError(400, 'No image file provided.', 'MISSING_IMAGE_FILE')
 
     try {
-      const post = await Post.findByPk(id)
+      const post = await PostService.updateBanner(id, req.file.filename)
 
       if (!post) throwHttpError(404, 'Post not found.', 'POST_NOT_FOUND')
-
-      // deleta a imagem antiga se ela exisitr e não for um link, para salvar espaço
-      if (post.banner && !post.banner.startsWith('http')) {
-        // constrói o caminho antigo do banner
-        const oldFilePath = path.resolve(__dirname, '..', '..', 'uploads', 'banners', post.banner)
-
-        // apaga o arquivo de forma assíncrona, e o catch vazio é para
-        // evitar erro caso o arquivo físico tenha sumido
-        await fs.unlink(oldFilePath).catch(() => null)
-      }
-
-      // atualiza o nome do novo arquivo gerado pelo multer
-      await post.update({ banner: req.file.filename })
 
       return res.status(200).json({
         message: 'Banner updated successfully.',
@@ -265,7 +157,7 @@ class PostController {
     const { id } = req.params
 
     try {
-      const deleted = await Post.destroy({ where: { id } })
+      const deleted = await PostService.delete(id)
 
       if (!deleted) throwHttpError(404, 'Post not found.', 'POST_NOT_FOUND')
 
