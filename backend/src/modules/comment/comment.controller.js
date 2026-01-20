@@ -1,5 +1,4 @@
-import { Comment, Post, User } from '../index.models.js'
-import { formatCommentObject } from '../../utils/formatResourceObject.js'
+import CommentService from './comment.service.js'
 import { getPagination, formatPaginationResponse } from '../../utils/getPagination.js'
 import throwHttpError from '../../utils/throwHttpError.js'
 
@@ -10,10 +9,9 @@ class CommentController {
     const { content } = req.body
 
     try {
-      const comment = await Comment.create({ content, postId, userId })
+      const comment = await CommentService.create({ content, postId, userId })
 
-      const formattedComment = formatCommentObject(comment.toJSON())
-      return res.status(201).json(formattedComment)
+      return res.status(201).json(comment)
     } catch (error) {
       next(error)
     }
@@ -24,37 +22,16 @@ class CommentController {
     const { page, limit, offset } = getPagination(req.query)
 
     try {
-      const post = await Post.findByPk(postId)
+      const data = await CommentService.getByPost(postId, { limit, offset })
 
-      if (!post) throwHttpError(404, 'Post not found.', 'POST_NOT_FOUND')
-
-      const { count, rows: comments } = await Comment.findAndCountAll({
-        where: { postId },
-        include: [
-          {
-            model: User,
-            as: 'user',
-            attributes: ['id', 'name', 'slug', 'avatar'],
-          },
-          {
-            model: Post,
-            as: 'post',
-            attributes: ['id', 'title', 'slug'],
-          },
-        ],
-        distinct: true,
-        limit,
-        offset,
-        order: [['createdAt', 'DESC']],
-      })
-
-      if (comments.length === 0) {
+      if (!data) {
         return res.status(200).json({ message: 'There are no comments under this post yet.' })
       }
 
-      const formattedComments = comments.map((comment) => formatCommentObject(comment.toJSON()))
+      const { count, posts } = data
+
       return res.status(200).json({
-        items: formattedComments,
+        posts,
         pagination: formatPaginationResponse(count, page, limit),
       })
     } catch (error) {
@@ -67,22 +44,11 @@ class CommentController {
     const { content } = req.body
 
     try {
-      const comment = await Comment.findByPk(id, {
-        include: [
-          {
-            model: Post,
-            as: 'post',
-            attributes: ['id', 'title', 'slug'],
-          },
-        ],
-      })
+      const comment = await CommentService.update(id, { content })
 
       if (!comment) throwHttpError(404, 'Comment not found.', 'COMMENT_NOT_FOUND')
 
-      const updatedComment = await comment.update({ content })
-
-      const formattedComment = formatCommentObject(updatedComment.toJSON())
-      return res.status(200).json(formattedComment)
+      return res.status(200).json(comment)
     } catch (error) {
       next(error)
     }
@@ -92,7 +58,7 @@ class CommentController {
     const { id } = req.params
 
     try {
-      const deleted = await Comment.destroy({ where: { id } })
+      const deleted = await CommentService.delete(id)
 
       if (!deleted) throwHttpError(404, 'Comment not found.', 'COMMENT_NOT_FOUND')
 
