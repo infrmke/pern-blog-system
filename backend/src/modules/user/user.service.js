@@ -133,8 +133,8 @@ class UserService {
     return { avatar: updatedUser.avatar }
   }
 
-  async destroy(filter) {
-    const user = await UserRepository.findByPk(filter)
+  async destroy(id) {
+    const user = await UserRepository.findByPk(id)
 
     if (!user) return null
 
@@ -144,7 +144,7 @@ class UserService {
       await fs.unlink(filePath).catch(() => null)
     }
 
-    return await UserRepository.remove({ id: filter })
+    return await UserRepository.remove(id)
   }
 }
 
