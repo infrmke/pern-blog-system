@@ -27,14 +27,18 @@ const formatPostObject = (post) => ({
   content: post.content,
   createdAt: post.createdAt,
   updatedAt: post.updatedAt,
-  likesCount: post.likedBy ? post.likedBy.length : 0,
-  author: post.author
-    ? {
-        id: post.author.id,
-        name: post.author.name,
-        slug: post.author.slug,
-      }
-    : null,
+
+  // só adiciona likesCount se houver ao menos 1 like
+  ...(post.likedBy?.length > 0 && { likesCount: post.likedBy.length }),
+
+  // só adiciona a propriedade author se ela existir
+  ...(post.author && {
+    author: {
+      id: post.author.id,
+      name: post.author.name,
+      slug: post.author.slug,
+    },
+  }),
 })
 
 /**
