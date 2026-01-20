@@ -104,7 +104,8 @@ class UserService {
     delete data.confirm_password
 
     const updatedUser = await UserRepository.update(id, data)
-    if (!updatedUser) throwHttpError(400, 'User not found.', 'USER_NOT_FOUND')
+
+    if (!updatedUser) return null
 
     const formattedUser = formatUserObject(updatedUser.toJSON())
 
