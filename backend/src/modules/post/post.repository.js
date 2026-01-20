@@ -1,4 +1,4 @@
-import Post from './post.model.js'
+import { Post } from '../index.models.js'
 
 class PostRepository {
   async create(data) {

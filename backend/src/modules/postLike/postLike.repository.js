@@ -1,4 +1,4 @@
-import PostLike from './postLike.model.js'
+import { PostLike } from '../index.models.js'
 
 class PostLikeRepository {
   async create(data) {

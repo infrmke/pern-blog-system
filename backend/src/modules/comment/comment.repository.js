@@ -1,4 +1,4 @@
-import Comment from './comment.model.js'
+import { Comment } from '../index.models.js'
 
 class CommentRepository {
   async create(data) {

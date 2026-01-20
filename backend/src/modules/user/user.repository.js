@@ -1,4 +1,4 @@
-import User from './user.model.js'
+import { User } from '../index.models.js'
 
 class UserRepository {
   async create(data) {
