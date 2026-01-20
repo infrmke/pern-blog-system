@@ -62,9 +62,7 @@ class PostController {
 
       if (!post) throwHttpError(404, 'Post not found.', 'POST_NOT_FOUND')
 
-      const formattedPost = formatPostObject(post.toJSON())
-
-      return res.status(200).json(formattedPost)
+      return res.status(200).json(post)
     } catch (error) {
       next(error)
     }
