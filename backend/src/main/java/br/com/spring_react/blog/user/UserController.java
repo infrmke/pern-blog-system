@@ -39,32 +39,32 @@ public class UserController {
     }
 
     @GetMapping("/{id}") // GET /users/id
-    public UserDTO getUserById(@PathVariable UUID id) {
+    public ResponseEntity<Object> getUserById(@PathVariable UUID id) {
         return userRepository.findById(id)
-                .map(user -> new UserDTO(user.getId(), user.getName(), user.getEmail(), user.getAvatar(), user.getSlug(), user.getRole()))
-                .orElseThrow(() -> new RuntimeException("User not found."));
+                .map(user -> ResponseEntity.ok((Object) new UserDTO(user.getId(), user.getName(), user.getEmail(), user.getAvatar(), user.getSlug(), user.getRole())))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found."));
     }
 
     @GetMapping("/profile/{slug}") // GET /users/profile/slug
-    public UserDTO getUserBySlug(@PathVariable String slug) {
+    public ResponseEntity<Object> getUserBySlug(@PathVariable String slug) {
         return userRepository.findBySlug(slug)
-                .map(user -> new UserDTO(user.getId(), user.getName(), user.getEmail(), user.getAvatar(), user.getSlug(), user.getRole()))
-                .orElseThrow(() -> new RuntimeException("User not found."));
+                .map(user -> ResponseEntity.ok((Object) new UserDTO(user.getId(), user.getName(), user.getEmail(), user.getAvatar(), user.getSlug(), user.getRole())))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found."));
     }
 
     @PostMapping // POST /users
-    public UserDTO createUser(@RequestBody User user) {
+    public ResponseEntity<Object> createUser(@RequestBody User user) {
         // verifica se o usuário já existe
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new RuntimeException("E-mail already exists.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("This e-mail already exists.");
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         User savedUser = userRepository.save(user);
 
-        return new UserDTO(
+        return ResponseEntity.status(HttpStatus.CREATED).body(new UserDTO(
                 savedUser.getId(), savedUser.getName(), savedUser.getEmail(),
-                savedUser.getAvatar(), savedUser.getSlug(), savedUser.getRole());
+                savedUser.getAvatar(), savedUser.getSlug(), savedUser.getRole()));
     }
 
     @PatchMapping("/{id}") // PATCH /users/id
@@ -82,7 +82,7 @@ public class UserController {
 
                 // verifica se o e-mail existe e não é o e-mail do próprio usuário que está tentando atualizar
                 if (existingUser.isPresent() && !existingUser.get().getId().equals(id)) {
-                    throw new RuntimeException("This e-mail already exists.");
+                    return ResponseEntity.status(HttpStatus.CONFLICT).body((Object) "This e-mail already exists.");
                 }
 
                 user.setEmail(updateData.email());
@@ -98,7 +98,6 @@ public class UserController {
             return ResponseEntity.ok((Object) new UserDTO(
                     user.getId(), user.getName(), user.getEmail(),
                     user.getAvatar(), user.getSlug(), user.getRole()));
-
         }).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found."));
     }
 
