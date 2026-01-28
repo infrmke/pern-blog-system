@@ -4,6 +4,7 @@ import br.com.spring_react.blog.user.internal.User;
 import br.com.spring_react.blog.user.internal.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,9 +16,11 @@ import java.util.UUID;
 public class UserController {
 
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public UserController(UserRepository userRepository) {
+    public UserController(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping // GET /users
@@ -56,6 +59,7 @@ public class UserController {
             throw new RuntimeException("E-mail already exists.");
         }
 
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         User savedUser = userRepository.save(user);
 
         return new UserDTO(
@@ -86,7 +90,7 @@ public class UserController {
 
             // só atualiza se o "password" não for nulo
             if (updateData.password() != null) {
-                user.setPassword(updateData.password());
+                user.setPassword(passwordEncoder.encode(updateData.password()));
             }
 
             userRepository.save(user);
