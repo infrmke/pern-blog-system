@@ -46,6 +46,10 @@ public class User {
     @Setter(AccessLevel.NONE)
     private LocalDateTime createdAt;
 
+    @Column(name = "updated_at")
+    @Setter(AccessLevel.NONE)
+    private LocalDateTime updatedAt;
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
@@ -67,5 +71,10 @@ public class User {
         if (this.role == null) {
             this.role = UserRole.USER;
         }
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
     }
 }
