@@ -53,14 +53,25 @@ public class UserController {
     }
 
     @PostMapping // POST /users
-    public ResponseEntity<Object> createUser(@RequestBody User user) {
+    public ResponseEntity<Object> createUser(@RequestBody UserCreateDTO user) {
+
         // verifica se o usuário já existe
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+        if (userRepository.findByEmail(user.email()).isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(new MessageResponse("This e-mail already exists."));
         }
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        User savedUser = userRepository.save(user);
+        // verifica se as senhas são iguais
+        if (!user.password().equals(user.confirmPassword())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Passwords must match each other."));
+        }
+
+        // atribuindo campos ao novo usuário
+        User newUser = new User();
+        newUser.setName(user.name());
+        newUser.setEmail(user.email());
+        newUser.setPassword(passwordEncoder.encode(user.password()));
+
+        User savedUser = userRepository.save(newUser);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(new UserDTO(
                 savedUser.getId(), savedUser.getName(), savedUser.getEmail(),
