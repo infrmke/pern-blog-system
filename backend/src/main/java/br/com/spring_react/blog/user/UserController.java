@@ -2,6 +2,7 @@ package br.com.spring_react.blog.user;
 
 import br.com.spring_react.blog.user.internal.User;
 import br.com.spring_react.blog.user.internal.UserRepository;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -53,7 +54,7 @@ public class UserController {
     }
 
     @PostMapping // POST /users
-    public ResponseEntity<Object> createUser(@RequestBody UserCreateDTO user) {
+    public ResponseEntity<Object> createUser(@Valid @RequestBody UserCreateDTO user) {
 
         // verifica se o usuário já existe
         if (userRepository.findByEmail(user.email()).isPresent()) {
@@ -79,7 +80,7 @@ public class UserController {
     }
 
     @PatchMapping("/{id}") // PATCH /users/id
-    public ResponseEntity<Object> updateUser(@PathVariable UUID id, @RequestBody UserUpdateDTO updateData) {
+    public ResponseEntity<Object> updateUser(@PathVariable UUID id, @Valid @RequestBody UserUpdateDTO updateData) {
         return userRepository.findById(id).map(user -> {
 
             // só atualiza se o "name" não for nulo
