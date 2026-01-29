@@ -88,8 +88,12 @@ public class UserController {
                 user.setEmail(updateData.email());
             }
 
-            // só atualiza se o "password" não for nulo
+            // só atualiza se o "password" não for nulo e corresponder com "confirmPassword"
             if (updateData.password() != null) {
+                if (!updateData.password().equals(updateData.confirmPassword())) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body((Object) new MessageResponse("Passwords must match each other."));
+                }
+
                 user.setPassword(passwordEncoder.encode(updateData.password()));
             }
 
