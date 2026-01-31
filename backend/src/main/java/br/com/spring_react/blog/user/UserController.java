@@ -1,6 +1,7 @@
 package br.com.spring_react.blog.user;
 
 import br.com.spring_react.blog.user.internal.User;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -73,10 +74,12 @@ public class UserController {
     }
 
     @PatchMapping("/{id}") // PATCH /users/id
-    public ResponseEntity<Object> updateUser(@PathVariable UUID id,
+    public ResponseEntity<Object> updateUser(@PathVariable UUID id, HttpServletRequest request,
                                              @Valid @RequestBody UserUpdateDTO updateData) {
         try {
-            User updatedUser = userService.updateUser(id, updateData);
+            String userId = (String) request.getAttribute("userId"); // recuperando o id anexado
+
+            User updatedUser = userService.updateUser(id, UUID.fromString(userId), updateData);
 
             return ResponseEntity.ok((Object) new UserDTO(
                     updatedUser.getId(), updatedUser.getName(), updatedUser.getEmail(),
@@ -90,9 +93,11 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}") // DELETE /users/id
-    public ResponseEntity<Object> deleteUser(@PathVariable UUID id) {
+    public ResponseEntity<Object> deleteUser(@PathVariable UUID id, HttpServletRequest request) {
+        String userId = (String) request.getAttribute("userId"); // recuperando o id anexado
+
         try {
-            userService.deleteUser(id);
+            userService.deleteUser(id, UUID.fromString(userId));
 
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {

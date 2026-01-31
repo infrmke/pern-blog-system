@@ -208,9 +208,7 @@ public class PostController {
     }
 
     @PatchMapping("/{id}") // PATCH /posts/{id}
-    public ResponseEntity<Object> updatePost(@PathVariable UUID id,
-                                             @RequestBody PostUpdateDTO updateData,
-                                             HttpServletRequest request) {
+    public ResponseEntity<Object> updatePost(@PathVariable UUID id, HttpServletRequest request, @RequestBody PostUpdateDTO updateData) {
         try {
             String userId = (String) request.getAttribute("userId"); // recuperando o id anexado
 
@@ -218,7 +216,7 @@ public class PostController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse("User not authenticated."));
             }
 
-            Post updatedPost = postService.updatePost(id, updateData);
+            Post updatedPost = postService.updatePost(id, UUID.fromString(userId), updateData);
 
             UserSummaryDTO authorSummary = new UserSummaryDTO(
                     updatedPost.getAuthor().getId(),
@@ -241,9 +239,11 @@ public class PostController {
     }
 
     @DeleteMapping("/{id}") // DELETE /posts/{id}
-    public ResponseEntity<Object> deletePost(@PathVariable UUID id) {
+    public ResponseEntity<Object> deletePost(@PathVariable UUID id, HttpServletRequest  request) {
+        String userId = (String) request.getAttribute("userId"); // recuperando o id anexado
+
         try {
-            postService.deletePost(id);
+            postService.deletePost(id, UUID.fromString(userId));
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse(e.getMessage()));
