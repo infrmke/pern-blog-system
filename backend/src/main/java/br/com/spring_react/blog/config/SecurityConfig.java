@@ -28,28 +28,21 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        // rotas públicas
+                        // rotas de autenticação
                         .requestMatchers(HttpMethod.POST, "/sessions/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/users").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/users/profile/{id}").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/users/{id}").permitAll()
+                        .requestMatchers("/sessions/**").authenticated() // para GET /me e POST /logout
 
-                        // rotas privadas (precisa estar logado)
-                        .requestMatchers(HttpMethod.PATCH, "/users/{id}").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/users/{id}").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/posts").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/posts/{id}").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/posts/slug/{postSlug}").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/posts/author/{authorSlug}").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/posts/search").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/posts").authenticated()
-                        .requestMatchers(HttpMethod.PATCH, "/posts/{id}").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/posts/{id}").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/sessions/me").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/sessions/logout").authenticated()
+                        // endpoints para USERS
+                        .requestMatchers(HttpMethod.GET, "/users", "/users/**").permitAll() // tudo que é GET em /users é público
+                        .requestMatchers(HttpMethod.POST, "/users").permitAll() // cadastro é público
+                        .requestMatchers("/users/**").authenticated() // PATCH e DELETE em /users exige login
 
-                        .anyRequest().authenticated() // tudo mais precisa de login, por enquanto
+                        // endpoints para POSTS
+                        .requestMatchers(HttpMethod.GET, "/posts/**").permitAll() // tudo que é GET em /posts é público
+                        .requestMatchers("/posts/**").authenticated() // POST, PATCH e DELETE em /posts exige login
+
+                        // outras rotas (fallback)
+                        .anyRequest().authenticated()
                 )
                 // o filtro vem ANTES do filtro padrão de usuário e senha
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
