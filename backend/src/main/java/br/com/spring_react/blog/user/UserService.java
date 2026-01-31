@@ -1,5 +1,8 @@
 package br.com.spring_react.blog.user;
 
+import br.com.spring_react.blog.infra.exceptions.ForbiddenActionException;
+import br.com.spring_react.blog.infra.exceptions.ResourceAlreadyExistsException;
+import br.com.spring_react.blog.infra.exceptions.ResourceNotFoundException;
 import br.com.spring_react.blog.user.internal.User;
 import br.com.spring_react.blog.user.internal.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,13 +31,13 @@ public class UserService {
     @Transactional(readOnly = true)
     public User findById(UUID id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
     }
 
     @Transactional(readOnly = true)
     public User findBySlug(String slug) {
         return userRepository.findBySlug(slug)
-                .orElseThrow(() -> new RuntimeException("User not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
     }
 
     public User findByEmailForAuth(String email) {
@@ -47,7 +50,7 @@ public class UserService {
 
         // verifica se o usuário já existe
         if (userRepository.findByEmail(data.email()).isPresent()) {
-            throw new RuntimeException("This e-mail already exists.");
+            throw new ResourceAlreadyExistsException("This e-mail already exists.");
         }
 
         // verifica se as senhas correspondem
@@ -66,11 +69,11 @@ public class UserService {
     @Transactional
     public User updateUser(UUID id, UUID authenticatedUserId, UserUpdateDTO data) {
         if (!id.equals(authenticatedUserId)) {
-            throw new RuntimeException("You are not authorized to modify this account.");
+            throw new ForbiddenActionException("You are not authorized to modify this account.");
         }
 
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
 
         // altera nome se "name" não for null
         if (data.name() != null && !data.name().equals(user.getName())) {
@@ -86,7 +89,7 @@ public class UserService {
         if (data.email() != null && !data.email().equals(user.getEmail())) {
             if (userRepository.findByEmail(data.email()).isPresent()) {
                 // verifica se o usuário já existe
-                throw new RuntimeException("This e-mail already exists.");
+                throw new ResourceAlreadyExistsException("This e-mail already exists.");
             }
             user.setEmail(data.email());
         }
@@ -106,11 +109,11 @@ public class UserService {
     @Transactional
     public void deleteUser(UUID id, UUID authenticatedUserId) {
         if (!id.equals(authenticatedUserId)) {
-            throw new RuntimeException("You are not authorized to modify this account.");
+            throw new ForbiddenActionException("You are not authorized to modify this account.");
         }
 
         if (!userRepository.existsById(id)) {
-            throw new RuntimeException("User not found.");
+            throw new ResourceNotFoundException("User not found.");
         }
         userRepository.deleteById(id);
     }

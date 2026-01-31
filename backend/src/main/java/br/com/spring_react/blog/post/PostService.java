@@ -1,5 +1,7 @@
 package br.com.spring_react.blog.post;
 
+import br.com.spring_react.blog.infra.exceptions.ForbiddenActionException;
+import br.com.spring_react.blog.infra.exceptions.ResourceNotFoundException;
 import br.com.spring_react.blog.post.internal.Post;
 import br.com.spring_react.blog.post.internal.PostRepository;
 import br.com.spring_react.blog.user.UserService;
@@ -28,14 +30,14 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public Post findById(UUID id) {
-        return postRepository.findById(id).orElseThrow(() -> new RuntimeException("Post not found" +
-                "."));
+        return postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post " +
+                "not found."));
     }
 
     @Transactional(readOnly = true)
     public Post findBySlug(String slug) {
-        return postRepository.findBySlug(slug).orElseThrow(() -> new RuntimeException("Post not " +
-                "found."));
+        return postRepository.findBySlug(slug).orElseThrow(() -> new ResourceNotFoundException(
+                "Post not found."));
     }
 
     @Transactional(readOnly = true)
@@ -53,7 +55,7 @@ public class PostService {
         User author = userService.findById(authorId);
 
         if (author == null) {
-            throw new RuntimeException("Author not found.");
+            throw new ResourceNotFoundException("Author not found.");
         }
 
         Post post = new Post();
@@ -69,10 +71,10 @@ public class PostService {
     @Transactional
     public Post updatePost(UUID postId, UUID authenticatedUserId, PostUpdateDTO data) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Post not found."));
 
         if (!post.getAuthor().getId().equals(authenticatedUserId)) {
-            throw new RuntimeException("You are not authorized to modify this post.");
+            throw new ForbiddenActionException("You are not authorized to modify this post.");
         }
 
         if (data.title() != null) {
@@ -93,10 +95,10 @@ public class PostService {
     @Transactional
     public void deletePost(UUID id, UUID authenticatedUserId) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Post not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Post not found."));
 
         if (!post.getAuthor().getId().equals(authenticatedUserId)) {
-            throw new RuntimeException("You are not authorized to modify this post.");
+            throw new ForbiddenActionException("You are not authorized to modify this post.");
         }
 
         postRepository.deleteById(id);
