@@ -2,6 +2,7 @@ package br.com.spring_react.blog.post;
 
 import br.com.spring_react.blog.infra.exceptions.ForbiddenActionException;
 import br.com.spring_react.blog.infra.exceptions.ResourceNotFoundException;
+import br.com.spring_react.blog.infra.services.MultiPartService;
 import br.com.spring_react.blog.post.internal.Post;
 import br.com.spring_react.blog.post.internal.PostRepository;
 import br.com.spring_react.blog.user.UserService;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,10 +21,12 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserService userService;
+    private final MultiPartService multiPartService;
 
-    public PostService(PostRepository postRepository, UserService userService) {
+    public PostService(PostRepository postRepository, UserService userService, MultiPartService multiPartService) {
         this.postRepository = postRepository;
         this.userService = userService;
+        this.multiPartService = multiPartService;
     }
 
     @Transactional(readOnly = true)
@@ -91,6 +95,27 @@ public class PostService {
             post.setContent(data.content());
         }
 
+        return postRepository.save(post);
+    }
+
+    @Transactional
+    public Post updateBanner(UUID id, UUID authenticatedUserId, MultipartFile file) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Post not found."));
+
+        if (!post.getAuthor().getId().equals(authenticatedUserId)) {
+            throw new ForbiddenActionException("You are not authorized to modify this post.");
+        }
+
+        // deleta a imagem antiga se ela existir e não for um link (pra salvar espaço)
+        if (post.getBanner() != null && !post.getBanner().startsWith("http")) {
+            multiPartService.deleteImage("banners", post.getBanner());
+        }
+
+        // redimensiona e converte a imagem para .webp
+        String newFileName = multiPartService.processImage(file, "banners", 1200);
+
+        post.setBanner(newFileName);
         return postRepository.save(post);
     }
 

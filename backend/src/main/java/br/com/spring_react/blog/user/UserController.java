@@ -8,8 +8,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -74,6 +76,18 @@ public class UserController {
         return ResponseEntity.ok((Object) new UserDTO(
                 updatedUser.getId(), updatedUser.getName(), updatedUser.getEmail(),
                 updatedUser.getAvatar(), updatedUser.getSlug(), updatedUser.getRole()));
+    }
+
+    @PatchMapping(value = "/{id}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Object> updateAvatar(@PathVariable UUID id,
+                                               HttpServletRequest request,
+                                               @RequestParam("avatar") MultipartFile file) {
+        String userId = (String) request.getAttribute("userId"); // recuperando o id anexado
+
+        User updatedUser = userService.updateAvatar(id, UUID.fromString(userId), file);
+
+        return ResponseEntity.ok(new UserAvatarResponse("Avatar updated successfully.",
+                updatedUser.getAvatar()));
     }
 
     @DeleteMapping("/{id}") // DELETE /users/id

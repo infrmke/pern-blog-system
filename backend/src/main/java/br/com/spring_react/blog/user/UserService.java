@@ -3,6 +3,7 @@ package br.com.spring_react.blog.user;
 import br.com.spring_react.blog.infra.exceptions.ForbiddenActionException;
 import br.com.spring_react.blog.infra.exceptions.ResourceAlreadyExistsException;
 import br.com.spring_react.blog.infra.exceptions.ResourceNotFoundException;
+import br.com.spring_react.blog.infra.services.MultiPartService;
 import br.com.spring_react.blog.user.internal.User;
 import br.com.spring_react.blog.user.internal.UserRepository;
 import org.springframework.data.domain.Page;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -18,10 +20,12 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final MultiPartService multiPartService;
 
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, MultiPartService multiPartService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.multiPartService = multiPartService;
     }
 
     @Transactional(readOnly = true)
@@ -104,6 +108,27 @@ public class UserService {
             user.setPassword(passwordEncoder.encode(data.password()));
         }
 
+        return userRepository.save(user);
+    }
+
+    @Transactional
+    public User updateAvatar(UUID id, UUID authenticatedUserId, MultipartFile file) {
+        if (!id.equals(authenticatedUserId)) {
+            throw new ForbiddenActionException("You are not authorized to modify this account.");
+        }
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
+
+        // deleta a imagem antiga se ela existir e não for um link (pra salvar espaço)
+        if (user.getAvatar() != null && !user.getAvatar().startsWith("http")) {
+            multiPartService.deleteImage("avatars", user.getAvatar());
+        }
+
+        // redimensiona e converte a imagem para .webp
+        String newFileName = multiPartService.processImage(file, "avatars", 500);
+
+        user.setAvatar(newFileName);
         return userRepository.save(user);
     }
 
