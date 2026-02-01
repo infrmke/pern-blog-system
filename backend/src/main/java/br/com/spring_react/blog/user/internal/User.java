@@ -1,5 +1,6 @@
 package br.com.spring_react.blog.user.internal;
 
+import br.com.spring_react.blog.post.internal.Post;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
@@ -47,6 +48,9 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING) // pode ser "USER" ou "ADMIN"
     @Column(nullable = false)
     private UserRole role = UserRole.USER; // o padrão é "USER"
+    
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Post> posts;
 
     @Column(name = "created_at", updatable = false)
     @Setter(AccessLevel.NONE)
