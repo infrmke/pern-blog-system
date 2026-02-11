@@ -50,7 +50,7 @@ public class Post {
     private LocalDateTime updatedAt;
 
     @PrePersist
-    public void onCreate(){
+    protected void onCreate(){
         this.createdAt = LocalDateTime.now();
 
         // cria um slug único para o post (titulo-completo-e-uuid)
