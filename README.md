@@ -67,7 +67,7 @@ padrões de design nativos do Spring Framework:
 
 ## Planos Futuros
 
-- [ ] **Interatividade**: Implementar os módulos de `Comment` (Comentários) e `PostLike` (
+- [x] **Interatividade**: Implementar os módulos de `Comment` (Comentários) e `PostLike` (
   Curtidas);
 - [ ] **HATEOAS**: Adicionar hipermídia aos recursos da API para alcançar maior maturidade REST;
 - [ ] **Documentação**: Organizar e disponibilizar a documentação dos endpoints da API;
