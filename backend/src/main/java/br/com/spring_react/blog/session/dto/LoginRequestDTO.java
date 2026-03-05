@@ -1,4 +1,4 @@
-package br.com.spring_react.blog.session;
+package br.com.spring_react.blog.session.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

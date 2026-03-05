@@ -1,4 +1,4 @@
-package br.com.spring_react.blog.comment;
+package br.com.spring_react.blog.comment.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

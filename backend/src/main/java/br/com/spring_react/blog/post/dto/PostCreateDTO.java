@@ -1,4 +1,4 @@
-package br.com.spring_react.blog.post;
+package br.com.spring_react.blog.post.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

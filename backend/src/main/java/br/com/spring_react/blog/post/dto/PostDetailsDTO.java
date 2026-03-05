@@ -1,6 +1,6 @@
-package br.com.spring_react.blog.post;
+package br.com.spring_react.blog.post.dto;
 
-import br.com.spring_react.blog.user.UserSummaryDTO;
+import br.com.spring_react.blog.user.dto.UserSummaryDTO;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

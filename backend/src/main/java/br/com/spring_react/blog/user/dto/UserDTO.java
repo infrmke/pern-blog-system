@@ -1,4 +1,4 @@
-package br.com.spring_react.blog.user;
+package br.com.spring_react.blog.user.dto;
 
 import br.com.spring_react.blog.user.internal.UserRole;
 

@@ -1,7 +1,7 @@
-package br.com.spring_react.blog.comment;
+package br.com.spring_react.blog.comment.dto;
 
-import br.com.spring_react.blog.post.PostSummaryDTO;
-import br.com.spring_react.blog.user.UserSummaryDTO;
+import br.com.spring_react.blog.post.dto.PostSummaryDTO;
+import br.com.spring_react.blog.user.dto.UserSummaryDTO;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
