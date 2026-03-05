@@ -1,7 +1,8 @@
 package br.com.spring_react.blog.session;
 
-import br.com.spring_react.blog.user.MessageResponse;
-import br.com.spring_react.blog.user.UserDTO;
+import br.com.spring_react.blog.infra.MessageResponse;
+import br.com.spring_react.blog.session.dto.LoginRequestDTO;
+import br.com.spring_react.blog.user.dto.UserDTO;
 import br.com.spring_react.blog.user.UserService;
 import br.com.spring_react.blog.user.internal.User;
 import jakarta.servlet.http.HttpServletRequest;

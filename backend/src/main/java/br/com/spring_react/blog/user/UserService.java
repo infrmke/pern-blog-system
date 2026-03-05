@@ -4,6 +4,8 @@ import br.com.spring_react.blog.infra.exceptions.ForbiddenActionException;
 import br.com.spring_react.blog.infra.exceptions.ResourceAlreadyExistsException;
 import br.com.spring_react.blog.infra.exceptions.ResourceNotFoundException;
 import br.com.spring_react.blog.infra.services.MultiPartService;
+import br.com.spring_react.blog.user.dto.UserCreateDTO;
+import br.com.spring_react.blog.user.dto.UserUpdateDTO;
 import br.com.spring_react.blog.user.internal.User;
 import br.com.spring_react.blog.user.internal.UserRepository;
 import org.springframework.data.domain.Page;

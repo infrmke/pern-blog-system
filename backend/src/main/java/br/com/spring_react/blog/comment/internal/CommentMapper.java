@@ -1,8 +1,8 @@
 package br.com.spring_react.blog.comment.internal;
 
-import br.com.spring_react.blog.comment.CommentDetailsDTO;
-import br.com.spring_react.blog.post.PostSummaryDTO;
-import br.com.spring_react.blog.user.UserSummaryDTO;
+import br.com.spring_react.blog.comment.dto.CommentDetailsDTO;
+import br.com.spring_react.blog.post.dto.PostSummaryDTO;
+import br.com.spring_react.blog.user.dto.UserSummaryDTO;
 
 public class CommentMapper {
 

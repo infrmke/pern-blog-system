@@ -1,5 +1,7 @@
 package br.com.spring_react.blog.comment;
 
+import br.com.spring_react.blog.comment.dto.CommentCreateDTO;
+import br.com.spring_react.blog.comment.dto.CommentUpdateDTO;
 import br.com.spring_react.blog.comment.internal.Comment;
 import br.com.spring_react.blog.comment.internal.CommentRepository;
 import br.com.spring_react.blog.infra.exceptions.ForbiddenActionException;

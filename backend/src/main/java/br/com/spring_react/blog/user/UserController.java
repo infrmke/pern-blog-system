@@ -1,5 +1,10 @@
 package br.com.spring_react.blog.user;
 
+import br.com.spring_react.blog.infra.MessageResponse;
+import br.com.spring_react.blog.user.dto.UserAvatarResponse;
+import br.com.spring_react.blog.user.dto.UserCreateDTO;
+import br.com.spring_react.blog.user.dto.UserDTO;
+import br.com.spring_react.blog.user.dto.UserUpdateDTO;
 import br.com.spring_react.blog.user.internal.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;

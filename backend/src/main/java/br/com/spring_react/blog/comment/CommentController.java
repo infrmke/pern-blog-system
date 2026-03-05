@@ -1,5 +1,8 @@
 package br.com.spring_react.blog.comment;
 
+import br.com.spring_react.blog.comment.dto.CommentCreateDTO;
+import br.com.spring_react.blog.comment.dto.CommentDetailsDTO;
+import br.com.spring_react.blog.comment.dto.CommentUpdateDTO;
 import br.com.spring_react.blog.comment.internal.Comment;
 import br.com.spring_react.blog.comment.internal.CommentMapper;
 import jakarta.servlet.http.HttpServletRequest;

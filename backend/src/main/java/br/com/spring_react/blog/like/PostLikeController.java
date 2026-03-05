@@ -1,7 +1,7 @@
 package br.com.spring_react.blog.like;
 
 import br.com.spring_react.blog.like.internal.PostLikeService;
-import br.com.spring_react.blog.user.MessageResponse;
+import br.com.spring_react.blog.infra.MessageResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

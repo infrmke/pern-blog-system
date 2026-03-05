@@ -1,7 +1,7 @@
 package br.com.spring_react.blog.post.internal;
 
-import br.com.spring_react.blog.post.PostDetailsDTO;
-import br.com.spring_react.blog.user.UserSummaryDTO;
+import br.com.spring_react.blog.post.dto.PostDetailsDTO;
+import br.com.spring_react.blog.user.dto.UserSummaryDTO;
 
 public class PostMapper {
 

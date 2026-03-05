@@ -3,6 +3,8 @@ package br.com.spring_react.blog.post;
 import br.com.spring_react.blog.infra.exceptions.ForbiddenActionException;
 import br.com.spring_react.blog.infra.exceptions.ResourceNotFoundException;
 import br.com.spring_react.blog.infra.services.MultiPartService;
+import br.com.spring_react.blog.post.dto.PostCreateDTO;
+import br.com.spring_react.blog.post.dto.PostUpdateDTO;
 import br.com.spring_react.blog.post.internal.Post;
 import br.com.spring_react.blog.post.internal.PostRepository;
 import br.com.spring_react.blog.user.UserService;

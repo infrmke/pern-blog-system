@@ -1,8 +1,12 @@
 package br.com.spring_react.blog.post;
 
+import br.com.spring_react.blog.post.dto.PostBannerResponse;
+import br.com.spring_react.blog.post.dto.PostCreateDTO;
+import br.com.spring_react.blog.post.dto.PostDetailsDTO;
+import br.com.spring_react.blog.post.dto.PostUpdateDTO;
 import br.com.spring_react.blog.post.internal.Post;
 import br.com.spring_react.blog.post.internal.PostMapper;
-import br.com.spring_react.blog.user.MessageResponse;
+import br.com.spring_react.blog.infra.MessageResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
