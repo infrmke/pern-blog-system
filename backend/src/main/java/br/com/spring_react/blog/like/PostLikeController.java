@@ -2,6 +2,7 @@ package br.com.spring_react.blog.like;
 
 import br.com.spring_react.blog.like.internal.PostLikeService;
 import br.com.spring_react.blog.infra.MessageResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,9 @@ public class PostLikeController {
         this.postLikeService = postLikeService;
     }
 
-    @PostMapping("/post/{postId}")
+    @PostMapping("/post/{postId}") // POST /likes/post/{postId}
+    @Operation(summary = "Cria um like em uma publicação", description = "Vincula um like a um " +
+            "post existente usando o ID do usuário autenticado e o ID da publicação")
     public ResponseEntity<Object> toggleLike(@PathVariable UUID postId,
                                              HttpServletRequest request) {
         String userId = (String) request.getAttribute("userId"); // recuperando o id anexado

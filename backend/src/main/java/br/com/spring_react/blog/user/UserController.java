@@ -6,6 +6,7 @@ import br.com.spring_react.blog.user.dto.UserCreateDTO;
 import br.com.spring_react.blog.user.dto.UserDTO;
 import br.com.spring_react.blog.user.dto.UserUpdateDTO;
 import br.com.spring_react.blog.user.internal.User;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -31,6 +32,8 @@ public class UserController {
     }
 
     @GetMapping // GET /users
+    @Operation(summary = "Lista todos os usuários registrados", description = "Retorna os dados " +
+            "básicos de todos os usuários registrados")
     public ResponseEntity<Object> getAllUsers(@PageableDefault(size = 10, sort = "createdAt",
             direction = Sort.Direction.DESC) Pageable pageable) {
         Page<User> usersPage = userService.findAllUsers(pageable);
@@ -47,6 +50,9 @@ public class UserController {
     }
 
     @GetMapping("/{id}") // GET /users/id
+    @Operation(summary = "Lista o usuário solicitado por ID", description = "Retorna os dados " +
+            "básicos do" +
+            " usuário associado ao ID providenciado")
     public ResponseEntity<Object> getUserById(@PathVariable UUID id) {
         User user = userService.findById(id);
 
@@ -55,6 +61,9 @@ public class UserController {
     }
 
     @GetMapping("/profile/{slug}") // GET /users/profile/slug
+    @Operation(summary = "Lista o usuário solicitado por slug", description = "Retorna os dados " +
+            "básicos do" +
+            " usuário associado ao slug providenciado")
     public ResponseEntity<Object> getUserBySlug(@PathVariable String slug) {
         User user = userService.findBySlug(slug);
 
@@ -63,6 +72,8 @@ public class UserController {
     }
 
     @PostMapping // POST /users
+    @Operation(summary = "Cria um novo usuário", description = "Cria um novo usuário no banco de " +
+            "dados com role padrão \"USER\" e avatar gerado a partir de suas iniciais")
     public ResponseEntity<Object> createUser(@Valid @RequestBody UserCreateDTO user) {
         User savedUser = userService.createUser(user);
 
@@ -72,6 +83,8 @@ public class UserController {
     }
 
     @PatchMapping("/{id}") // PATCH /users/id
+    @Operation(summary = "Atualiza o usuário informado por ID", description = "Atualiza os dados " +
+            "básicos do usuário associado ao ID providenciado")
     public ResponseEntity<Object> updateUser(@PathVariable UUID id, HttpServletRequest request,
                                              @Valid @RequestBody UserUpdateDTO updateData) {
         String userId = (String) request.getAttribute("userId"); // recuperando o id anexado
@@ -84,6 +97,9 @@ public class UserController {
     }
 
     @PatchMapping(value = "/{id}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Atualiza o avatar do usuário informado por ID", description = "Atualiza" +
+            " o avatar do usuário associado ao ID providenciado, excluindo o arquivo binário " +
+            "antigo caso o mesmo exista")
     public ResponseEntity<Object> updateAvatar(@PathVariable UUID id,
                                                HttpServletRequest request,
                                                @RequestParam("avatar") MultipartFile file) {
@@ -96,6 +112,9 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}") // DELETE /users/id
+    @Operation(summary = "Exclui os dados do usuário informado por ID", description = "Deleta o " +
+            "usuário associado ao ID providenciado, incluindo dados, avatar, publicações, " +
+            "comentários e curtidas")
     public ResponseEntity<Object> deleteUser(@PathVariable UUID id, HttpServletRequest request) {
         String userId = (String) request.getAttribute("userId"); // recuperando o id anexado
 

@@ -7,6 +7,7 @@ import br.com.spring_react.blog.post.dto.PostUpdateDTO;
 import br.com.spring_react.blog.post.internal.Post;
 import br.com.spring_react.blog.post.internal.PostMapper;
 import br.com.spring_react.blog.infra.MessageResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -33,6 +34,8 @@ public class PostController {
     }
 
     @GetMapping // GET /posts
+    @Operation(summary = "Lista todas as publicações criadas", description = "Retorna os dados " +
+            "básicos de todas as publicações existentes")
     public ResponseEntity<Object> getAllPosts(@PageableDefault(size = 10, sort = "createdAt",
             direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Post> postsPage = postService.findAllPosts(pageable);
@@ -48,18 +51,24 @@ public class PostController {
     }
 
     @GetMapping("/{id}") // GET /posts/{id}
+    @Operation(summary = "Lista a publicação solicitada por ID", description = "Retorna os dados " +
+            "básicos da publicação associada ao ID providenciado")
     public ResponseEntity<Object> getPostById(@PathVariable UUID id) {
         Post post = postService.findById(id);
         return ResponseEntity.ok(PostMapper.toDetailsDTO(post));
     }
 
     @GetMapping("/slug/{postSlug}") // GET posts/slug/postSlug
+    @Operation(summary = "Lista a publicação solicitada por slug", description = "Retorna os " +
+            "dados básicos da publicação associada ao slug providenciado")
     public ResponseEntity<Object> getPostBySlug(@PathVariable String postSlug) {
         Post post = postService.findBySlug(postSlug);
         return ResponseEntity.ok(PostMapper.toDetailsDTO(post));
     }
 
     @GetMapping("/author/{authorSlug}") // GET /posts/author/authorSlug
+    @Operation(summary = "Lista as publicações solicitadas por slug de autor", description =
+            "Retorna todas as publicações associada ao slug de autor providenciado")
     public ResponseEntity<Object> getAllPostsByAuthor(@PathVariable String authorSlug,
                                                       @PageableDefault(size = 10, sort =
                                                               "createdAt", direction =
@@ -78,6 +87,9 @@ public class PostController {
     }
 
     @GetMapping("/search") // GET /posts/search?title=...
+    @Operation(summary = "Lista as publicações cujo título correspondem ao termo informado",
+            description = "Retorna os dados básicos de todas as publicações cujo título " +
+                    "correspondem ao termo providenciado")
     public ResponseEntity<Object> getAllPostsByTitle(@RequestParam String title,
                                                      @PageableDefault(size = 10, sort =
                                                              "createdAt", direction =
@@ -96,6 +108,8 @@ public class PostController {
     }
 
     @PostMapping // POST /posts
+    @Operation(summary = "Cria uma nova publicação", description = "Vincula uma publicação a um " +
+            "autor existente usando o ID do usuário autenticado")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Object> createPost(@Valid @RequestBody PostCreateDTO data,
                                              HttpServletRequest request) {
@@ -107,7 +121,10 @@ public class PostController {
     }
 
     @PatchMapping("/{id}") // PATCH /posts/{id}
-    public ResponseEntity<Object> updatePost(@PathVariable("id") UUID postId, HttpServletRequest request,
+    @Operation(summary = "Atualiza a publicação informada por ID", description = "Atualiza os " +
+            "dados básicos da publicação associada ao ID providenciado")
+    public ResponseEntity<Object> updatePost(@PathVariable("id") UUID postId,
+                                             HttpServletRequest request,
                                              @RequestBody PostUpdateDTO updateData) {
         String userId = (String) request.getAttribute("userId"); // recuperando o id anexado
 
@@ -117,6 +134,9 @@ public class PostController {
     }
 
     @PatchMapping(value = "/{id}/banner", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Atualiza o banner da publicação informada por ID", description =
+            "Atualiza o banner da publicação associada ao ID providenciado, excluindo o arquivo " +
+                    "binário antigo caso o mesmo existe")
     public ResponseEntity<Object> updateBanner(@PathVariable("id") UUID postId,
                                                HttpServletRequest request,
                                                @RequestParam("banner") MultipartFile file) {
@@ -129,7 +149,10 @@ public class PostController {
     }
 
     @DeleteMapping("/{id}") // DELETE /posts/{id}
-    public ResponseEntity<Object> deletePost(@PathVariable("id") UUID postId, HttpServletRequest request) {
+    @Operation(summary = "Exclui os dados da publicação informada por ID", description = "Deleta " +
+            "a publicação associada ao ID providenciado, incluindo banner, comentários e curtidas")
+    public ResponseEntity<Object> deletePost(@PathVariable("id") UUID postId,
+                                             HttpServletRequest request) {
         String userId = (String) request.getAttribute("userId"); // recuperando o id anexado
 
         postService.deletePost(postId, UUID.fromString(userId));

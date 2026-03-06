@@ -5,6 +5,7 @@ import br.com.spring_react.blog.session.dto.LoginRequestDTO;
 import br.com.spring_react.blog.user.dto.UserDTO;
 import br.com.spring_react.blog.user.UserService;
 import br.com.spring_react.blog.user.internal.User;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -28,7 +29,9 @@ public class SessionController {
         this.userService = userService;
     }
 
-    @GetMapping("/me")
+    @GetMapping("/me") // GET /sessions/me
+    @Operation(summary = "Lista o usuário autenticado", description = "Retorna os dados básicos " +
+            "do usuário atualmente autenticado")
     public ResponseEntity<Object> me(HttpServletRequest request) {
         String userId = (String) request.getAttribute("userId"); // recupera o ID do usuário
 
@@ -51,7 +54,9 @@ public class SessionController {
         ));
     }
 
-    @PostMapping("/login")
+    @PostMapping("/login") // POST /sessions/login
+    @Operation(summary = "Realiza o login de um usuário", description = "Cria uma nova sessão e " +
+            "atribui um token de acesso (JWT) a um cookie httpOnly")
     public ResponseEntity<Object> login(@Valid @RequestBody LoginRequestDTO data,
                                         HttpServletResponse response) {
         try {
@@ -75,7 +80,9 @@ public class SessionController {
         }
     }
 
-    @PostMapping("/logout")
+    @PostMapping("/logout") // POST /sessions/logout
+    @Operation(summary = "Realiza o logout de um usuário", description = "Destrói a sessão e " +
+            "remove o cookie httpOnly do navegador")
     public ResponseEntity<Object> logout(HttpServletResponse response) {
         ResponseCookie cookie = ResponseCookie.from("accessToken", "")
                 .httpOnly(true)
