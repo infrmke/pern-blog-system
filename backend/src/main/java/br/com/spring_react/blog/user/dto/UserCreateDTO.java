@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 
 public record UserCreateDTO(
         @NotBlank(message = "Name cannot be empty")
-        @Size(min = 2, max = 80, message = "Name must be between 2 or 80 characters")
+        @Size(min = 2, max = 54, message = "Name must be between 2 or 54 characters")
         String name,
 
         @NotBlank(message = "Email cannot be empty")
