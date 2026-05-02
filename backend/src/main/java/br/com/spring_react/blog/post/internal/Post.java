@@ -58,6 +58,12 @@ public class Post {
         if (this.slug == null || this.slug.isEmpty()) {
             this.slug = SlugGenerator.generate(this.title);
         }
+
+        // atribui um summary ao post se o autor não defini-lo
+        if (this.summary == null || this.summary.isBlank()) {
+            int limit = Math.min(content.length(), 150);
+            this.summary = content.substring(0, limit) + "...";
+        }
     }
 
     @PreUpdate
