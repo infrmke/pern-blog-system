@@ -8,9 +8,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
 
 @Service
 public class TokenService {
@@ -46,7 +44,8 @@ public class TokenService {
     }
 
     private Instant genExpirationDate() {
-        // pega a hora atual, adiciona mais 2 horas e converte para UTC no fuso horário de Brasília
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
+        return ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")) // fuso horário de Brasília
+                .plusDays(1) // adiciona 1 dia
+                .toInstant();
     }
 }

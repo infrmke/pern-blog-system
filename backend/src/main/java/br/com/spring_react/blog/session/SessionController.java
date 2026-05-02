@@ -68,7 +68,7 @@ public class SessionController {
                     .httpOnly(true)
                     .secure(false) // mudar para true em produção
                     .path("/")
-                    .maxAge(2 * 60 * 60) // 2 horas
+                    .maxAge(60 * 60 * 24) // 1 dia
                     .sameSite("Lax")
                     .build();
 
