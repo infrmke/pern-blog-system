@@ -135,8 +135,8 @@ public class UserController {
                                                HttpServletRequest request,
                                                @RequestParam("avatar") MultipartFile file) {
         String userId = (String) request.getAttribute("userId"); // recuperando o id anexado
-
         userService.updateAvatar(id, UUID.fromString(userId), file);
+
         return ResponseEntity.noContent().build();
     }
 
@@ -146,8 +146,8 @@ public class UserController {
             "comentários e curtidas")
     public ResponseEntity<Object> deleteUser(@PathVariable UUID id, HttpServletRequest request) {
         String userId = (String) request.getAttribute("userId"); // recuperando o id anexado
-
         userService.deleteUser(id, UUID.fromString(userId));
+
         return ResponseEntity.noContent().build();
     }
 }
