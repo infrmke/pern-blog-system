@@ -2,6 +2,7 @@ package br.com.spring_react.blog.session;
 
 import br.com.spring_react.blog.infra.services.TokenService;
 import br.com.spring_react.blog.session.dto.LoginRequestDTO;
+import br.com.spring_react.blog.session.dto.LoginResponse;
 import br.com.spring_react.blog.user.UserService;
 import br.com.spring_react.blog.user.internal.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,13 +22,14 @@ public class SessionService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public String authenticate(LoginRequestDTO data) {
+    public LoginResponse authenticate(LoginRequestDTO data) {
         User user = userService.findByEmailForAuth(data.email());
 
         if (!passwordEncoder.matches(data.password(), user.getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
 
-        return tokenService.generateToken(user);
+        String token = tokenService.generateToken(user);
+        return new LoginResponse(token, user);
     }
 }

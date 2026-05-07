@@ -1,12 +1,10 @@
 package br.com.spring_react.blog.post;
 
-import br.com.spring_react.blog.post.dto.PostBannerResponse;
 import br.com.spring_react.blog.post.dto.PostCreateDTO;
 import br.com.spring_react.blog.post.dto.PostDetailsDTO;
 import br.com.spring_react.blog.post.dto.PostUpdateDTO;
 import br.com.spring_react.blog.post.internal.Post;
 import br.com.spring_react.blog.post.internal.PostMapper;
-import br.com.spring_react.blog.infra.MessageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -128,10 +126,8 @@ public class PostController {
                                                @RequestParam("banner") MultipartFile file) {
         String userId = (String) request.getAttribute("userId");
 
-        Post updatedPost = postService.updateBanner(postId, UUID.fromString(userId), file);
-
-        return ResponseEntity.ok(new PostBannerResponse("Banner updated successfully.",
-                updatedPost.getBanner()));
+        postService.updateBanner(postId, UUID.fromString(userId), file);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}") // DELETE /posts/{id}

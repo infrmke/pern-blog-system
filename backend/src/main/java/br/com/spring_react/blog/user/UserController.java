@@ -1,7 +1,5 @@
 package br.com.spring_react.blog.user;
 
-import br.com.spring_react.blog.infra.MessageResponse;
-import br.com.spring_react.blog.user.dto.UserAvatarResponse;
 import br.com.spring_react.blog.user.dto.UserCreateDTO;
 import br.com.spring_react.blog.user.dto.UserDTO;
 import br.com.spring_react.blog.user.dto.UserUpdateDTO;
@@ -101,10 +99,8 @@ public class UserController {
                                                @RequestParam("avatar") MultipartFile file) {
         String userId = (String) request.getAttribute("userId"); // recuperando o id anexado
 
-        User updatedUser = userService.updateAvatar(id, UUID.fromString(userId), file);
-
-        return ResponseEntity.ok(new UserAvatarResponse("Avatar updated successfully.",
-                updatedUser.getAvatar()));
+        userService.updateAvatar(id, UUID.fromString(userId), file);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}") // DELETE /users/id
