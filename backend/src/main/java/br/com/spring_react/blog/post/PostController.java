@@ -37,9 +37,9 @@ public class PostController {
     public ResponseEntity<Object> getAllPosts(@PageableDefault(size = 10, sort = "createdAt",
             direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Post> postsPage = postService.findAllPosts(pageable);
-
         Page<PostDetailsDTO> dtoPage =
                 postsPage.map(post -> PostMapper.toDetailsDTO(post));
+
         return ResponseEntity.ok(dtoPage);
     }
 
@@ -67,9 +67,9 @@ public class PostController {
                                                               "createdAt", direction =
                                                               Sort.Direction.DESC) Pageable pageable) {
         Page<Post> postsPage = postService.findByAuthor(authorSlug, pageable);
-
         Page<PostDetailsDTO> dtoPage =
                 postsPage.map(post -> PostMapper.toDetailsDTO(post));
+
         return ResponseEntity.ok(dtoPage);
     }
 
@@ -82,9 +82,9 @@ public class PostController {
                                                              "createdAt", direction =
                                                              Sort.Direction.DESC) Pageable pageable) {
         Page<Post> postsPage = postService.findByTitle(title, pageable);
-
         Page<PostDetailsDTO> dtoPage =
                 postsPage.map(post -> PostMapper.toDetailsDTO(post));
+
         return ResponseEntity.ok(dtoPage);
     }
 
@@ -95,9 +95,11 @@ public class PostController {
     public ResponseEntity<Object> createPost(@Valid @RequestBody PostCreateDTO data,
                                              HttpServletRequest request) {
         String userId = (String) request.getAttribute("userId"); // recuperando o id anexado
-
         Post savedPost = postService.createPost(data, UUID.fromString(userId));
-        return ResponseEntity.status(HttpStatus.CREATED).body(PostMapper.toDetailsDTO(savedPost));
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(PostMapper.toDetailsDTO(savedPost));
     }
 
     @PatchMapping("/{id}") // PATCH /posts/{id}
@@ -107,9 +109,11 @@ public class PostController {
                                              HttpServletRequest request,
                                              @RequestBody PostUpdateDTO updateData) {
         String userId = (String) request.getAttribute("userId"); // recuperando o id anexado
-
         Post updatedPost = postService.updatePost(postId, UUID.fromString(userId), updateData);
-        return ResponseEntity.status(HttpStatus.CREATED).body(PostMapper.toDetailsDTO(updatedPost));
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(PostMapper.toDetailsDTO(updatedPost));
     }
 
     @PatchMapping(value = "/{id}/banner", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -120,8 +124,8 @@ public class PostController {
                                                HttpServletRequest request,
                                                @RequestParam("banner") MultipartFile file) {
         String userId = (String) request.getAttribute("userId");
-
         postService.updateBanner(postId, UUID.fromString(userId), file);
+
         return ResponseEntity.noContent().build();
     }
 
@@ -131,8 +135,8 @@ public class PostController {
     public ResponseEntity<Object> deletePost(@PathVariable("id") UUID postId,
                                              HttpServletRequest request) {
         String userId = (String) request.getAttribute("userId"); // recuperando o id anexado
-
         postService.deletePost(postId, UUID.fromString(userId));
+
         return ResponseEntity.noContent().build();
     }
 }
