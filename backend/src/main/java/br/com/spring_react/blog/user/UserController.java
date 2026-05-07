@@ -39,7 +39,6 @@ public class UserController {
         Page<UserDTO> dtoPage = usersPage.map(user -> new UserDTO(user.getId(), user.getName(),
                 user.getEmail(),
                 user.getAvatar(), user.getSlug(), user.getRole()));
-
         return ResponseEntity.ok(dtoPage);
     }
 
@@ -49,7 +48,6 @@ public class UserController {
             " usuário associado ao ID providenciado")
     public ResponseEntity<Object> getUserById(@PathVariable UUID id) {
         User user = userService.findById(id);
-
         return ResponseEntity.ok(new UserDTO(user.getId(), user.getName(), user.getEmail(),
                 user.getAvatar(), user.getSlug(), user.getRole()));
     }
@@ -60,7 +58,6 @@ public class UserController {
             " usuário associado ao slug providenciado")
     public ResponseEntity<Object> getUserBySlug(@PathVariable String slug) {
         User user = userService.findBySlug(slug);
-
         return ResponseEntity.ok(new UserDTO(user.getId(), user.getName(), user.getEmail(),
                 user.getAvatar(), user.getSlug(), user.getRole()));
     }
@@ -70,7 +67,6 @@ public class UserController {
             "dados com role padrão \"USER\" e avatar gerado a partir de suas iniciais")
     public ResponseEntity<Object> createUser(@Valid @RequestBody UserCreateDTO user) {
         User savedUser = userService.createUser(user);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(new UserDTO(
                 savedUser.getId(), savedUser.getName(), savedUser.getEmail(),
                 savedUser.getAvatar(), savedUser.getSlug(), savedUser.getRole()));
@@ -84,7 +80,6 @@ public class UserController {
         String userId = (String) request.getAttribute("userId"); // recuperando o id anexado
 
         User updatedUser = userService.updateUser(id, UUID.fromString(userId), updateData);
-
         return ResponseEntity.ok((Object) new UserDTO(
                 updatedUser.getId(), updatedUser.getName(), updatedUser.getEmail(),
                 updatedUser.getAvatar(), updatedUser.getSlug(), updatedUser.getRole()));

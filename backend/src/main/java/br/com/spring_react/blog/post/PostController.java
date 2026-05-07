@@ -40,7 +40,6 @@ public class PostController {
 
         Page<PostDetailsDTO> dtoPage =
                 postsPage.map(post -> PostMapper.toDetailsDTO(post));
-
         return ResponseEntity.ok(dtoPage);
     }
 
@@ -71,7 +70,6 @@ public class PostController {
 
         Page<PostDetailsDTO> dtoPage =
                 postsPage.map(post -> PostMapper.toDetailsDTO(post));
-
         return ResponseEntity.ok(dtoPage);
     }
 
@@ -87,7 +85,6 @@ public class PostController {
 
         Page<PostDetailsDTO> dtoPage =
                 postsPage.map(post -> PostMapper.toDetailsDTO(post));
-
         return ResponseEntity.ok(dtoPage);
     }
 
@@ -100,7 +97,6 @@ public class PostController {
         String userId = (String) request.getAttribute("userId"); // recuperando o id anexado
 
         Post savedPost = postService.createPost(data, UUID.fromString(userId));
-
         return ResponseEntity.status(HttpStatus.CREATED).body(PostMapper.toDetailsDTO(savedPost));
     }
 
@@ -113,7 +109,6 @@ public class PostController {
         String userId = (String) request.getAttribute("userId"); // recuperando o id anexado
 
         Post updatedPost = postService.updatePost(postId, UUID.fromString(userId), updateData);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(PostMapper.toDetailsDTO(updatedPost));
     }
 
