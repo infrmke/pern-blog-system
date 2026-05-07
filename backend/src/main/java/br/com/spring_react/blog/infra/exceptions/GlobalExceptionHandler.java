@@ -1,5 +1,6 @@
 package br.com.spring_react.blog.infra.exceptions;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,68 +19,117 @@ public class GlobalExceptionHandler {
 
     // lida com ROTAS QUE NÃO EXISTEM
     @ExceptionHandler(NoHandlerFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNotFound(NoHandlerFoundException ex) {
-        return ErrorResponse.build(HttpStatus.NOT_FOUND, "Route not found.", "ROUTE_NOT_FOUND",
-                null);
+    public ResponseEntity<ErrorResponse> handleNotFound(NoHandlerFoundException ex,
+                                                        HttpServletRequest request) {
+        return ErrorResponse.build(
+                "about:blank",
+                HttpStatus.NOT_FOUND,
+                "Route not found",
+                request.getRequestURI(),
+                null
+        );
     }
 
     // lida com ERRO DE DUPLICIDADE no banco de dados
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ErrorResponse> handleConflict(DataIntegrityViolationException ex) {
-        return ErrorResponse.build(HttpStatus.CONFLICT, "One or more records already exist.",
-                "RESOURCE_ALREADY_EXISTS", ex);
+    public ResponseEntity<ErrorResponse> handleConflict(DataIntegrityViolationException ex,
+                                                        HttpServletRequest request) {
+        return ErrorResponse.build(
+                "about:blank",
+                HttpStatus.CONFLICT,
+                "One or more records already exist",
+                request.getRequestURI(),
+                null
+        );
     }
 
     // lida com ERROS DE VALIDAÇÃO no estilo Zod
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<List<ValidationErrorResponse>> handleValidation(MethodArgumentNotValidException ex) {
-        List<ValidationErrorResponse> errors = ex.getBindingResult()
+    public ResponseEntity<ErrorResponse> handleValidation(
+            MethodArgumentNotValidException ex,
+            HttpServletRequest request) {
+
+        List<ValidationErrorResponse> validationErrors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
-                .map(error -> new ValidationErrorResponse(
-                        error.getField(),
-                        error.getDefaultMessage()
-                ))
+                .map(error -> new ValidationErrorResponse(error.getField(),
+                        error.getDefaultMessage()))
                 .toList();
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+
+        return ErrorResponse.build(
+                "about:blank",
+                HttpStatus.BAD_REQUEST,
+                "Your request has invalid fields",
+                request.getRequestURI(),
+                validationErrors
+        );
     }
 
     // lida com RESTRIÇÃO DE ACESSO
     @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
-    public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException ex) {
+    public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException ex,
+                                                            HttpServletRequest request) {
         return ErrorResponse.build(
-                HttpStatus.FORBIDDEN, "You are not authorized to proceed with this action.",
-                "FORBIDDEN_ACCESS",
-                ex
+                "about:blank",
+                HttpStatus.FORBIDDEN,
+                "You are not authorized to proceed with this action",
+                request.getRequestURI(),
+                null
         );
     }
 
     // fallback pra qualquer outro erro (500)
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleAll(Exception ex) {
-        return ErrorResponse.build(HttpStatus.INTERNAL_SERVER_ERROR, "There was an unexpected " +
-                "error. " +
-                "Try again later.", "INTERNAL_SERVER_ERROR", ex);
+    public ResponseEntity<ErrorResponse> handleAll(Exception ex, HttpServletRequest request) {
+        return ErrorResponse.build(
+                "about:blank",
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                ex.getMessage(),
+                request.getRequestURI(),
+                null
+        );
     }
 
     /* EXCEÇÕES PERSONALIZADAS */
 
     // lida com RESTRIÇÃO DE ACESSO
     @ExceptionHandler(ForbiddenActionException.class)
-    public ResponseEntity<ErrorResponse> handleForbiddenAction(ForbiddenActionException ex) {
-        return ErrorResponse.build(HttpStatus.FORBIDDEN, ex.getMessage(), "FORBIDDEN_ACTION", ex);
+    public ResponseEntity<ErrorResponse> handleForbiddenAction(ForbiddenActionException ex,
+                                                               HttpServletRequest request) {
+        return ErrorResponse.build(
+                "about:blank",
+                HttpStatus.FORBIDDEN,
+                ex.getMessage(),
+                request.getRequestURI(),
+                null
+        );
     }
 
     // lida com RECURSO NÃO ENCONTRADO
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleResourceNotFound(ResourceNotFoundException ex) {
-        return ErrorResponse.build(HttpStatus.NOT_FOUND, ex.getMessage(), "RESOURCE_NOT_FOUND", ex);
+    public ResponseEntity<ErrorResponse> handleResourceNotFound(
+            ResourceNotFoundException ex,
+            HttpServletRequest request) {
+
+        return ErrorResponse.build(
+                "about:blank",
+                HttpStatus.NOT_FOUND,
+                ex.getMessage(),
+                request.getRequestURI(),
+                null
+        );
     }
 
     // lida com DUPLICIDADE DE RECURSO
     @ExceptionHandler(ResourceAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponse> handleResourceAlreadyExists(ResourceAlreadyExistsException ex) {
-        return ErrorResponse.build(HttpStatus.CONFLICT, ex.getMessage(), "RESOURCE_ALREADY_EXISTS"
-                , ex);
+    public ResponseEntity<ErrorResponse> handleResourceAlreadyExists(
+            ResourceAlreadyExistsException ex, HttpServletRequest request) {
+        return ErrorResponse.build(
+                "about:blank",
+                HttpStatus.CONFLICT,
+                ex.getMessage(),
+                request.getRequestURI(),
+                null
+        );
     }
 }
