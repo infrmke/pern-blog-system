@@ -36,9 +36,16 @@ public class UserController {
             direction = Sort.Direction.DESC) Pageable pageable) {
         Page<User> usersPage = userService.findAllUsers(pageable);
 
-        Page<UserDTO> dtoPage = usersPage.map(user -> new UserDTO(user.getId(), user.getName(),
-                user.getEmail(),
-                user.getAvatar(), user.getSlug(), user.getRole()));
+        Page<UserDTO> dtoPage = usersPage.map(user ->
+                new UserDTO(
+                        user.getId(),
+                        user.getName(),
+                        user.getEmail(),
+                        user.getAvatar(),
+                        user.getSlug(),
+                        user.getRole()
+                )
+        );
         return ResponseEntity.ok(dtoPage);
     }
 
@@ -48,8 +55,17 @@ public class UserController {
             " usuário associado ao ID providenciado")
     public ResponseEntity<Object> getUserById(@PathVariable UUID id) {
         User user = userService.findById(id);
-        return ResponseEntity.ok(new UserDTO(user.getId(), user.getName(), user.getEmail(),
-                user.getAvatar(), user.getSlug(), user.getRole()));
+
+        return ResponseEntity.ok(
+                new UserDTO(
+                        user.getId(),
+                        user.getName(),
+                        user.getEmail(),
+                        user.getAvatar(),
+                        user.getSlug(),
+                        user.getRole()
+                )
+        );
     }
 
     @GetMapping("/profile/{slug}") // GET /users/profile/slug
@@ -58,8 +74,17 @@ public class UserController {
             " usuário associado ao slug providenciado")
     public ResponseEntity<Object> getUserBySlug(@PathVariable String slug) {
         User user = userService.findBySlug(slug);
-        return ResponseEntity.ok(new UserDTO(user.getId(), user.getName(), user.getEmail(),
-                user.getAvatar(), user.getSlug(), user.getRole()));
+
+        return ResponseEntity.ok(
+                new UserDTO(
+                    user.getId(),
+                    user.getName(),
+                    user.getEmail(),
+                    user.getAvatar(),
+                    user.getSlug(),
+                    user.getRole()
+                )
+        );
     }
 
     @PostMapping // POST /users
@@ -67,9 +92,19 @@ public class UserController {
             "dados com role padrão \"USER\" e avatar gerado a partir de suas iniciais")
     public ResponseEntity<Object> createUser(@Valid @RequestBody UserCreateDTO user) {
         User savedUser = userService.createUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new UserDTO(
-                savedUser.getId(), savedUser.getName(), savedUser.getEmail(),
-                savedUser.getAvatar(), savedUser.getSlug(), savedUser.getRole()));
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(
+                        new UserDTO(
+                            savedUser.getId(),
+                            savedUser.getName(),
+                            savedUser.getEmail(),
+                            savedUser.getAvatar(),
+                            savedUser.getSlug(),
+                            savedUser.getRole()
+                        )
+                );
     }
 
     @PatchMapping("/{id}") // PATCH /users/id
@@ -78,11 +113,18 @@ public class UserController {
     public ResponseEntity<Object> updateUser(@PathVariable UUID id, HttpServletRequest request,
                                              @Valid @RequestBody UserUpdateDTO updateData) {
         String userId = (String) request.getAttribute("userId"); // recuperando o id anexado
-
         User updatedUser = userService.updateUser(id, UUID.fromString(userId), updateData);
-        return ResponseEntity.ok((Object) new UserDTO(
-                updatedUser.getId(), updatedUser.getName(), updatedUser.getEmail(),
-                updatedUser.getAvatar(), updatedUser.getSlug(), updatedUser.getRole()));
+
+        return ResponseEntity.ok((Object)
+                new UserDTO(
+                    updatedUser.getId(),
+                    updatedUser.getName(),
+                    updatedUser.getEmail(),
+                    updatedUser.getAvatar(),
+                    updatedUser.getSlug(),
+                    updatedUser.getRole()
+                )
+        );
     }
 
     @PatchMapping(value = "/{id}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
