@@ -37,8 +37,10 @@ public class PostController {
     public ResponseEntity<Object> getAllPosts(@PageableDefault(size = 10, sort = "createdAt",
             direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Post> postsPage = postService.findAllPosts(pageable);
-        Page<PostDetailsDTO> dtoPage =
-                postsPage.map(post -> PostMapper.toDetailsDTO(post));
+
+        Page<PostDetailsDTO> dtoPage = postsPage.map(
+                post -> PostMapper.toDetailsDTO(post)
+        );
 
         return ResponseEntity.ok(dtoPage);
     }
@@ -67,8 +69,10 @@ public class PostController {
                                                               "createdAt", direction =
                                                               Sort.Direction.DESC) Pageable pageable) {
         Page<Post> postsPage = postService.findByAuthor(authorSlug, pageable);
-        Page<PostDetailsDTO> dtoPage =
-                postsPage.map(post -> PostMapper.toDetailsDTO(post));
+
+        Page<PostDetailsDTO> dtoPage = postsPage.map(
+                post -> PostMapper.toDetailsDTO(post)
+        );
 
         return ResponseEntity.ok(dtoPage);
     }
@@ -82,8 +86,10 @@ public class PostController {
                                                              "createdAt", direction =
                                                              Sort.Direction.DESC) Pageable pageable) {
         Page<Post> postsPage = postService.findByTitle(title, pageable);
-        Page<PostDetailsDTO> dtoPage =
-                postsPage.map(post -> PostMapper.toDetailsDTO(post));
+
+        Page<PostDetailsDTO> dtoPage = postsPage.map(
+                post -> PostMapper.toDetailsDTO(post)
+        );
 
         return ResponseEntity.ok(dtoPage);
     }
