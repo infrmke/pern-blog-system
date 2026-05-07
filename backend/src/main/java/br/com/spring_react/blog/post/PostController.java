@@ -40,10 +40,6 @@ public class PostController {
             direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Post> postsPage = postService.findAllPosts(pageable);
 
-        if (postsPage.isEmpty()) {
-            return ResponseEntity.ok(new MessageResponse("There are no recorded posts."));
-        }
-
         Page<PostDetailsDTO> dtoPage =
                 postsPage.map(post -> PostMapper.toDetailsDTO(post));
 
@@ -75,11 +71,6 @@ public class PostController {
                                                               Sort.Direction.DESC) Pageable pageable) {
         Page<Post> postsPage = postService.findByAuthor(authorSlug, pageable);
 
-        if (postsPage.isEmpty()) {
-            return ResponseEntity.ok(new MessageResponse("There are no recorded posts from this " +
-                    "author yet."));
-        }
-
         Page<PostDetailsDTO> dtoPage =
                 postsPage.map(post -> PostMapper.toDetailsDTO(post));
 
@@ -95,11 +86,6 @@ public class PostController {
                                                              "createdAt", direction =
                                                              Sort.Direction.DESC) Pageable pageable) {
         Page<Post> postsPage = postService.findByTitle(title, pageable);
-
-        if (postsPage.isEmpty()) {
-            return ResponseEntity.ok(new MessageResponse("There are no matching results to this " +
-                    "search."));
-        }
 
         Page<PostDetailsDTO> dtoPage =
                 postsPage.map(post -> PostMapper.toDetailsDTO(post));

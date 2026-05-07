@@ -38,10 +38,6 @@ public class UserController {
             direction = Sort.Direction.DESC) Pageable pageable) {
         Page<User> usersPage = userService.findAllUsers(pageable);
 
-        if (usersPage.isEmpty()) {
-            return ResponseEntity.ok(new MessageResponse("There are no registered users."));
-        }
-
         Page<UserDTO> dtoPage = usersPage.map(user -> new UserDTO(user.getId(), user.getName(),
                 user.getEmail(),
                 user.getAvatar(), user.getSlug(), user.getRole()));
