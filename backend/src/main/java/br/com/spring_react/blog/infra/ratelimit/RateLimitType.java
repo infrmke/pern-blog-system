@@ -11,7 +11,8 @@ public enum RateLimitType {
     LOGIN(5, Duration.ofMinutes(15)),
     SIGNUP(3, Duration.ofHours(1)),
     POST_CREATION(10, Duration.ofDays(1)),
-    COMMENT_CREATION(5, Duration.ofMinutes(1));
+    COMMENT_CREATION(5, Duration.ofMinutes(1)),
+    LIKE_TOGGLE(30, Duration.ofMinutes(1));
 
     private final int capacity;
     private final Duration refillDuration;

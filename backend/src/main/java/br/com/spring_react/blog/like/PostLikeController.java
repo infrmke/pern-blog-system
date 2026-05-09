@@ -1,5 +1,7 @@
 package br.com.spring_react.blog.like;
 
+import br.com.spring_react.blog.infra.ratelimit.RateLimit;
+import br.com.spring_react.blog.infra.ratelimit.RateLimitType;
 import br.com.spring_react.blog.like.internal.PostLikeService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,6 +25,7 @@ public class PostLikeController {
     }
 
     @PostMapping("/post/{postId}") // POST /likes/post/{postId}
+    @RateLimit(type = RateLimitType.LIKE_TOGGLE)
     @Operation(summary = "Alterna curtida em uma publicação", description = "Adiciona ou remove a" +
             " curtida do usuário autenticado em um post.")
     public ResponseEntity<Void> toggleLike(@PathVariable UUID postId,
